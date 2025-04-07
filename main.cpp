@@ -8,12 +8,17 @@
 using namespace std;
 
 //-------------------------------------------------
+// testing, delete later
+//-------------------------------------------------
+View view;
+
+//-------------------------------------------------
 // Main Function
 //-------------------------------------------------
 
 int main() {
     // Testing, delete later
-    // view.viewIndividual(69, "staffacc.txt");
+    view.viewIndividual("mat", "staffacc.txt");
 
     // Ensure the account files exist.
     ensureFileExists("staffacc.txt");

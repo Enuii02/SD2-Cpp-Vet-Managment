@@ -3,6 +3,6 @@
 class View{
     public:
 
-    void viewIndividual(int ID, std::string fileName);
+    void viewIndividual(std::string name, std::string fileName);
 
 };
