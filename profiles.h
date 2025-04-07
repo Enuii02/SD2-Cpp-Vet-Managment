@@ -4,6 +4,7 @@ class User
 {
     public:
     int ID;
+    std::string TypeOfUser;
     std::string FirstName;
     std::string LastName;
     std::string login;
@@ -11,10 +12,18 @@ class User
     std::string DOB;
     std::string ContactInfo;
     void DisplaySelfInfo();
-    void SaveUser();
+    void SaveToDB();
 };
 
-
+class Pet
+{
+    int PetID;
+    std::string Name;
+    std::string OwnderId;
+    std::string LastAppointment;
+    std::string MedicalHistory;
+    void SaveToDB();
+};
 
 /*
 Classes needed:
@@ -40,6 +49,7 @@ Last appointment
 USER:
 
 ID
+TypeOfUser
 FirstName
 LastName
 Login
@@ -50,7 +60,7 @@ ContactINfo
 methods:
 
 DisplaySelfInfo() - will allow users to display their information
-SaveUser() - will save user to the database when making a new one
+SaveToDB() - will save user to the database when making a new one
 
 ALL USER UNDER WILL INHERIT FROM USER
 
