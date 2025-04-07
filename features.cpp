@@ -14,19 +14,37 @@ void View::viewIndividual(string name, string fileName){
     string token;
     ifstream MyReadFile(fileName);
 
+
     while (getline (MyReadFile, line)) {
-        // Output the text from the file
-        // cout << user << endl;
+        details.clear();
         stringstream ss(line);
-        while (ss, token, ','){
+
+        while (getline(ss, token, ',')){
             details.push_back(token);
         }
-        
+
+        // check if staff
+        if(!details.empty() && details [0] == name && details.size() == 3){ 
+            std::cout << "Details for " << name << ":" << endl;
+            std::cout << "Username: " << details[0] << endl;
+            std::cout << "Password: " << details[1] << endl;
+            std::cout << "Role: " << details[2] << endl;
+        }
+        // check if guest
+        else if(!details.empty() && details [0] == name && details.size() == 5){
+            std::cout << "Details for " << name << ":" << endl;
+            std::cout << "Username: " << details[0] << endl;
+            std::cout << "Password: " << details[1] << endl;
+            std::cout << "Full name: " << details[2] << endl;
+            std::cout << "Email: " << details[3] << endl;
+            std::cout << "Phone: " << details[4] << endl;
+        }
+        //TODO: add condition for pet
       }
       
       // Close the file
       MyReadFile.close();
       
-    cout << "Displaying info" << name << fileName << endl;
+    cout << "Info from: " << fileName << endl;
 
 }

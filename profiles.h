@@ -17,7 +17,6 @@ class User
 
 class Pet
 {
-    int PetID;
     std::string Name;
     std::string OwnderId;
     std::string LastAppointment;

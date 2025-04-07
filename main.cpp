@@ -18,7 +18,7 @@ View view;
 
 int main() {
     // Testing, delete later
-    view.viewIndividual("mat", "staffacc.txt");
+    view.viewIndividual("mat", "owner.txt");
 
     // Ensure the account files exist.
     ensureFileExists("staffacc.txt");
