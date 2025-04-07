@@ -1,8 +1,7 @@
 #include <iostream>
 #include "profiles.h"
-#include "features.h"
 
-void User::DisplaySelfInfo()
+void User::displaySelfInfo()
 {
     std::cout <<"User info: " << std::endl;
 }

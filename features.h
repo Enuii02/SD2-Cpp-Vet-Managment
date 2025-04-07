@@ -1,23 +1,8 @@
-/*
-Here are the features that we need to implement:
+#include<string>
 
-addPet
-viewPetData
-updatePetData
-deletePetData
+class View{
+    public:
 
-addOwner
-viewOwnerData
-updateOwnerData
-deleteOwnerData
+    void viewIndividual(int ID, std::string fileName);
 
-scheduleAppointment
-modifyAppointment
-cancelAppointment
-viewAppointments
-
-saveFIle()
-
-for the sake of simplicity each features will be a one simple class.
-
-*/
+};

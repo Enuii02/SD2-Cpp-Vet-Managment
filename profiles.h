@@ -11,8 +11,8 @@ class User
     std::string password;
     std::string DOB;
     std::string ContactInfo;
-    void DisplaySelfInfo();
-    void SaveToDB();
+    void displaySelfInfo();
+    void saveToDB();
 };
 
 class Pet
@@ -22,7 +22,7 @@ class Pet
     std::string OwnderId;
     std::string LastAppointment;
     std::string MedicalHistory;
-    void SaveToDB();
+    void saveToDB();
 };
 
 /*

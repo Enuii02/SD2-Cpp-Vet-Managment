@@ -4,6 +4,7 @@
 #include <string>
 #include <limits>
 #include <vector>
+#include "features.h"
 
 using namespace std;
 
