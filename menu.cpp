@@ -1,3 +1,8 @@
+//-------------------------------------------------
+// IMPROTANT! This is commented out of main and 
+// shouldn't be used until we make the base classes.
+//-------------------------------------------------
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -31,6 +36,7 @@ void ensureFileExists(const string& filename) {
 
 // For staff accounts, records are stored in: username,password,role
 // For guest accounts, records are stored in: username,password,fullName,email,phone
+
 // Check credentials: returns true if username and password match the expected role.
 // expectedRole for guest should be "Guest"; for others, exactly "Admin", "Staff", or "Veterinary".
 bool checkCredentials(const string& username, const string& password, const string& filename, const string& expectedRole) {
@@ -104,32 +110,6 @@ bool loginUser(const string& expectedRole) {
         return false;
     }
 }
-
-//-------------------------------------------------
-// Menu Function Declarations
-//-------------------------------------------------
-
-void mainMenu();
-void loginMenu();
-void signUpMenu();
-
-void adminMenu();
-void staffMenu();
-void veterinaryMenu();
-void guestMenu();
-
-void adminAppointmentManagementMenu();
-void adminOwnerManagementMenu();
-void adminPetManagementMenu();
-void adminSystemManagementMenu();
-
-void staffAppointmentManagementMenu();
-
-void veterinaryAppointmentManagementMenu();
-void veterinaryOwnerManagementMenu();
-
-void createNewAccount();
-void alreadyHaveAccount();
 
 //-------------------------------------------------
 // Main Menu

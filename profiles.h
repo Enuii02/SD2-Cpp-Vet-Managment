@@ -1,18 +1,36 @@
 #include<string>
+#include"features.h"
 
+
+//-------------------------------------------------
+// User Blueprint
+//-------------------------------------------------
+
+// All users will follow this formula:
+// username, role, password, fullName, email, phoneNumber
+// The order must be kept like that
 class User
 {
     public:
-    int ID;
-    std::string TypeOfUser;
-    std::string FirstName;
-    std::string LastName;
-    std::string login;
+    // constructor
+    User(const std::string& uname, const std::string& r, const std::string& pwd,
+        const std::string& fname, const std::string& mail, const std::string& phone);
+    
+    // view this user's details
+    void viewSelf(const std::string& fileNameWithPath) const;
+
+    // save user's details
+    void saveSelf(std::string uname, std::string r, std::string pwd,
+        std::string fname, std::string mail, std::string phone);
+
+    private:
+    std::string username;
+    std::string role;
     std::string password;
-    std::string DOB;
-    std::string ContactInfo;
-    void displaySelfInfo();
-    void saveToDB();
+    std::string fullName;
+    std::string email;
+    std::string phoneNumber;
+    
 };
 
 class Pet
