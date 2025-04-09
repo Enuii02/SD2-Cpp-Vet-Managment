@@ -18,6 +18,10 @@ void View::viewIndividual(string name, string fileName){
     string line;
     string token;
     ifstream MyReadFile(fileName);
+    if (!MyReadFile.is_open()) {
+        std::cerr << "Failed to open file: " << fileName << std::endl;
+        return;
+    }
 
     while (getline (MyReadFile, line)) {
         details.clear();
@@ -39,8 +43,9 @@ void View::viewIndividual(string name, string fileName){
         // details[4] = email
         // details[5] = phone
     
-        //check if user
+        //check if user/staff
         if (!details.empty() && details[0] == name && details.size() == 6) {
+            std::cout << "========================================" << endl;
             std::cout << "Details for " << name << ":" << std::endl;
             std::cout << "Username: " << details[0] << std::endl;
             std::cout << "Role: " << details[1] << std::endl;
@@ -48,6 +53,8 @@ void View::viewIndividual(string name, string fileName){
             std::cout << "Full Name: " << details[3] << std::endl;
             std::cout << "Email: " << details[4] << std::endl;
             std::cout << "Phone Number: " << details[5] << std::endl;
+            std::cout << "========================================" << endl;
+
         }
 
         // check if pet
@@ -110,13 +117,11 @@ void Save::saveUser(std::string uname, std::string r, std::string pwd,
             }       
          }
 
-        catch(const std::exception& e){
-            std::cerr << e.what() << '\n';
+        catch(const char* e){
+            std::cerr << e << '\n';
         }
         
         ofstream MyFile(pathToFile, std::ios::app);
-
-        cout << pathToFile;
 
         MyFile << uname << "," << r << "," << pwd << "," << fname << "," << mail << "," << phone << "\n";
 
@@ -133,3 +138,153 @@ void Save::saveUser(std::string uname, std::string r, std::string pwd,
     
             MyFile.close();
         }
+
+//-------------------------------------------------
+// Update section
+//-------------------------------------------------
+
+void Update::updateSelf(std::string uname, std::string fileName){
+
+    //reads the file
+    vector<string> details;
+    string line;
+    string token;
+    ifstream MyReadFile(fileName);
+
+    while (getline (MyReadFile, line))
+    {
+        details.clear();
+        stringstream ss(line);
+
+        while(getline(ss, token, ',')){
+            details.push_back(token);
+        }
+
+        if(!details.empty() && details[0] == uname && details.size() == 6){
+            break;
+        }
+    }
+
+    //authentication
+    string password = details[2];
+    string userInputPassword;
+
+    bool authenticated = false;
+    for (int i = 3; i >= 0; i--) {
+        cout << "Please enter password: ";
+        cin >> userInputPassword;
+
+        if (userInputPassword == password) {
+            cout << "Password accepted!" << endl;
+            authenticated = true;
+            break;
+        } else {
+            cout << "Invalid password, please try again. \n [Tries left: " << i << "]" << endl;
+        }
+    }
+
+    if (!authenticated) {
+        cout << "You entered a wrong password too many times, try again later." << endl;
+        return;  // Exit the function early
+    }
+
+    //asks for changes
+    while (true) {
+        int choice;
+        cout << "\n--- What would you like to update in your profile? ---\n";
+        cout << "1. Username [1]\n";
+        cout << "2. Password [2]\n";
+        cout << "3. Email [3]\n";
+        cout << "4. Phone [4]\n";
+        cout << "0. Back [0]\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+    
+        if (choice == 1) {
+            string newUsername;
+            cout << "Enter new username: ";
+            cin >> newUsername;
+            details[0] = newUsername;
+            cout << "Username updated to " << newUsername << endl;
+            break;  // exit after successful update
+        }
+    
+        else if (choice == 2) {
+            string newPassword;
+            cout << "Enter new password: ";
+            cin >> newPassword;
+            details[2] = newPassword;
+            cout << "Password updated." << endl;
+            break;
+        }
+    
+        else if (choice == 3) {
+            string newEmail;
+            cout << "Enter new email: ";
+            cin >> newEmail;
+            details[4] = newEmail;
+            cout << "Email updated to " << newEmail << endl;
+            break;
+        }
+    
+        else if (choice == 4) {
+            string newPhone;
+            cout << "Enter new phone number: ";
+            cin >> newPhone;
+            details[5] = newPhone;
+            cout << "Phone number updated to " << newPhone << endl;
+            break;
+        }
+    
+        else if (choice == 0) {
+            cout << "Returning to previous menu..." << endl;
+            break;
+        }
+    
+        else {
+            cout << "Invalid option selected. Please try again.\n";
+        }
+    }
+    //saves the changes
+
+    string updatedLine = details[0] + "," + details[1] + "," + details[2] + "," +
+                     details[3] + "," + details[4] + "," + details[5];
+    
+    vector<string> allLines;
+    ifstream inputFile(fileName);
+
+    while(getline(inputFile, line)){
+        allLines.push_back(line);
+    }
+
+    inputFile.close();
+
+    for (auto& l : allLines) {
+        stringstream ss(l);
+        string temp;
+        getline(ss, temp, ',');  // temp holds the username
+        if (temp == uname) {
+            l = updatedLine;
+            break;
+        }
+    }
+
+    ofstream outputFile(fileName);
+    for (const auto& l : allLines) {
+        outputFile << l << '\n';
+    }
+    outputFile.close();
+
+    cout << "Profile updated successfully. \n";
+}
+
+
+//-------------------------------------------------
+// Delete section
+//-------------------------------------------------
+
+void Delete::deleteProfile(std::string uname){
+    cout << "Deleting profile: " << uname;
+}
+
+    

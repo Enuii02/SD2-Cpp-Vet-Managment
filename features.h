@@ -21,3 +21,15 @@ class Save{
     void savePet(std::string name, std::string ownerUsername, std::string appointmentsHistory, 
         std::string DOB, std::string breed);
 };
+
+class Update{
+    public:
+
+    void updateSelf(std::string uname, std::string filename);
+};
+
+class Delete{
+    public:
+
+    void deleteProfile(std::string uname);
+};
