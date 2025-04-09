@@ -156,14 +156,28 @@ void Save::saveUser(std::string uname, std::string r, std::string pwd,
     void Save::savePet(std::string name, std::string ownerUsername, std::string appointmentsHistory, 
         std::string DOB, std::string breed){
             string pathToFile = "Data/pets.txt";
-    
             ofstream MyFile(pathToFile, std::ios::app);
+
+            if (!MyFile.is_open()) {
+                std::cerr << "Failed to open file: " << "pets.txt" << std::endl;
+                return;
+            }
     
             MyFile << name << "," << ownerUsername << "," << appointmentsHistory << "," << DOB << "," << breed << "\n";
     
             MyFile.close();
         }
+    
+    void Save::saveAppointment(int appointmentID, std::string petName, std::string ownerUsername, std::string appopintmentDate, std::string appointmentDescription){
+        ofstream MyFile("Data/appointments.txt", std::ios::app);
+        if (!MyFile.is_open()) {
+            std::cerr << "Failed to open file: " << "appointments.txt" << std::endl;
+            return;
+        }
+        MyFile << appointmentID << "," << petName << "," << ownerUsername << "," << appopintmentDate << "," << appointmentDescription << "\n";
 
+        MyFile.close();
+        }
 //-------------------------------------------------
 // Update section
 //-------------------------------------------------

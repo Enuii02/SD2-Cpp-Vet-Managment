@@ -24,7 +24,7 @@ class Save{
     void savePet(std::string name, std::string ownerUsername, std::string appointmentsHistory, 
         std::string DOB, std::string breed);
 
-    //TODO saveAppointment
+    void saveAppointment(int appointmentID, std::string petName, std::string ownerUsername, std::string appopintmentDate, std::string appointmentDescription);
 };
 
 class Update{
