@@ -64,22 +64,16 @@ class Pet
 // Appointment class
 //-------------------------------------------------
 
-class Appointment
-{   
+class Appointment {
     public:
-    // constructor
-    Appointment(const std::string& petName, const std::string& ownerUsername, 
-                const std::string& appointmentDate, const std::string& appointmentDescription);
+        // Constructor
+        Appointment(int appointmentID, const std::string& petName, const std::string& ownerUsername, 
+                    const std::string& appointmentDate, const std::string& appointmentDescription);
     
-    // view this appointment's details
-    void viewSelf(const std::string& fileNameWithPath) const;
-
-    // save appointment's details
-    void saveSelf() const;
-
     private:
-    std::string petName;
-    std::string ownerUsername;
-    std::string appointmentDate;
-    std::string appointmentDescription;
-};
+        int appointmentID;
+        std::string petName;
+        std::string ownerUsername;
+        std::string appointmentDate;
+        std::string appointmentDescription;
+    };
