@@ -16,11 +16,20 @@ int main() {
 
     //-------------------------------------------------
     // For Testing, delete later
-    User user1("john_doe", "admin", "secure_password", "John Doe", "john.doe@example.com", "555-1234");
-    user1.viewSelf("Data/staffacc.txt");
+    //-------------------------------------------------
+
+    Pet myPet("Buddy", "john_doe", "2024-05-01, 2025-01-15", "2020-08-12", "Golden Retriever");
+
+
+    // User user1("john_doe", "admin", "secure_password", "John Doe", "john.doe@example.com", "555-1234");
+    // user1.viewSelf("Data/staffacc.txt");
+
+    // Save save;
+    // save.saveUser("john_doe", "admin", "secure_password", "John Doe", "john.doe@example.com", "555-1234");
 
     View view;
-    view.viewAll("Data/staffacc.txt");
+    // view.viewAllUsers("Data/staffacc.txt");
+    // view.viewAllPets("Data/pets.txt");
     //-------------------------------------------------
 
     ensureFileExists("Data/staffacc.txt");

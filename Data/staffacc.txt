@@ -1,1 +1,0 @@
-john_doe,admin,secure_password,John Doe,john.doe@example.com,555-1234

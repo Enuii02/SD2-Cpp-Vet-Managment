@@ -34,12 +34,26 @@ class User
 };
 
 class Pet
-{
-    std::string Name;
-    std::string OwnderId;
-    std::string LastAppointment;
-    std::string MedicalHistory;
-    void saveToDB();
+{   
+    public:
+    // constructor
+    Pet(const std::string& name, const std::string& ownerUsername, const std::string& appointmentsHistry,
+        const std::string& DOB, const std::string& breed);
+    
+    // view this user's details
+    void viewSelf(const std::string& fileNameWithPath) const;
+
+    // save user's details
+    void saveSelf(std::string uname, std::string r, std::string pwd,
+        std::string fname, std::string mail, std::string phone);
+
+
+    private:
+    std::string name;
+    std::string ownerUsername;
+    std::string appointmentsHistory;
+    std::string DOB;
+    std::string breed;
 };
 
 /*

@@ -53,11 +53,10 @@ void View::viewIndividual(string name, string fileName){
         // check if pet
         else if(!details.empty() && details [0] == name && fileName=="pets.txt"){
             std::cout << "Details for " << name << ":" << endl;
-            std::cout << "Username: " << details[0] << endl;
-            std::cout << "Password: " << details[1] << endl;
-            std::cout << "Full name: " << details[2] << endl;
-            std::cout << "Email: " << details[3] << endl;
-            std::cout << "Phone: " << details[4] << endl;
+            std::cout << "Name: " << details[0] << endl;
+            std::cout << "Owner Username: " << details[1] << endl;
+            std::cout << "Date of birth: " << details[2] << endl;
+            std::cout << "breed: " << details[3] << endl;
         }
     
     cout << "Info from: " << fileName << endl;
@@ -67,12 +66,23 @@ void View::viewIndividual(string name, string fileName){
     MyReadFile.close();
 }
 
-void View::viewAll(std::string fileName){
+void View::viewAllUsers(std::string fileName){
     ifstream MyReadFile(fileName);
     string output;
 
     cout << "== Displaying: " << fileName << " ==" << endl;
     cout << "Format: username, role, password, full name, email, phone number" << endl << endl;
+    while (getline (MyReadFile, output)) {
+        cout << output << endl;
+    };
+}
+
+void View::viewAllPets(std::string fileName){
+    ifstream MyReadFile(fileName);
+    string output;
+
+    cout << "== Displaying: " << fileName << " ==" << endl;
+    cout << "Format: name, ownerUsername, apoointmentHistory, DOB, breed" << endl << endl;
     while (getline (MyReadFile, output)) {
         cout << output << endl;
     };
@@ -106,7 +116,20 @@ void Save::saveUser(std::string uname, std::string r, std::string pwd,
         
         ofstream MyFile(pathToFile);
 
+        cout << pathToFile;
+
         MyFile << uname << "," << r << "," << pwd << "," << fname << "," << mail << "," << phone << "\n";
 
         MyFile.close();
     }
+
+    void Save::savePet(std::string name, std::string ownerUsername, std::string appointmentsHistory, 
+        std::string DOB, std::string breed){
+            string pathToFile = "Data/pets.txt";
+    
+            ofstream MyFile(pathToFile);
+    
+            MyFile << name << "," << ownerUsername << "," << appointmentsHistory << "," << DOB << "," << breed << "\n";
+    
+            MyFile.close();
+        }

@@ -6,7 +6,9 @@ class View{
 
     void viewIndividual(std::string name, std::string fileName);
 
-    void viewAll(std::string fileName);
+    void viewAllUsers(std::string fileName);
+
+    void viewAllPets(std::string fileName);
 };
 
 
@@ -15,4 +17,7 @@ class Save{
 
     void saveUser(std::string uname, std::string r, std::string pwd, 
         std::string fname, std::string mail, std::string phone);
+
+    void savePet(std::string name, std::string ownerUsername, std::string appointmentsHistory, 
+        std::string DOB, std::string breed);
 };
