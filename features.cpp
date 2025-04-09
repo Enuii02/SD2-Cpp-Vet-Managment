@@ -120,12 +120,37 @@ void Save::saveUser(std::string uname, std::string r, std::string pwd,
         catch(const char* e){
             std::cerr << e << '\n';
         }
+
+        vector<string> details;
+        string line;
+        string token;
+        ifstream MyReadFile(pathToFile);
+        if (!MyReadFile.is_open()) {
+            std::cerr << "Failed to open file: " << pathToFile << std::endl;
+            return;
+        }
         
+        //Check if the profile already exists in the database
+        while (getline (MyReadFile, line)) {
+            details.clear();
+            stringstream ss(line);
+    
+            while (getline(ss, token, ',')){
+                details.push_back(token);
+            }
+
+            if(details[0] == uname){
+                cout << "User already exists, please login!" << endl;
+                return;
+            }
+        }
+        // save the file
         ofstream MyFile(pathToFile, std::ios::app);
 
         MyFile << uname << "," << r << "," << pwd << "," << fname << "," << mail << "," << phone << "\n";
 
         MyFile.close();
+        
     }
 
     void Save::savePet(std::string name, std::string ownerUsername, std::string appointmentsHistory, 
