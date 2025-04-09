@@ -114,7 +114,7 @@ void Save::saveUser(std::string uname, std::string r, std::string pwd,
             std::cerr << e.what() << '\n';
         }
         
-        ofstream MyFile(pathToFile);
+        ofstream MyFile(pathToFile, std::ios::app);
 
         cout << pathToFile;
 
@@ -127,7 +127,7 @@ void Save::saveUser(std::string uname, std::string r, std::string pwd,
         std::string DOB, std::string breed){
             string pathToFile = "Data/pets.txt";
     
-            ofstream MyFile(pathToFile);
+            ofstream MyFile(pathToFile, std::ios::app);
     
             MyFile << name << "," << ownerUsername << "," << appointmentsHistory << "," << DOB << "," << breed << "\n";
     
