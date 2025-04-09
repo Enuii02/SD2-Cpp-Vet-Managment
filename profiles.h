@@ -33,6 +33,10 @@ class User
     
 };
 
+//-------------------------------------------------
+// Pet class
+//-------------------------------------------------
+
 class Pet
 {   
     public:
@@ -56,91 +60,26 @@ class Pet
     std::string breed;
 };
 
-/*
-Classes needed:
+//-------------------------------------------------
+// Appointment class
+//-------------------------------------------------
 
--Pet
+class Appointment
+{   
+    public:
+    // constructor
+    Appointment(const std::string& petName, const std::string& ownerUsername, 
+                const std::string& appointmentDate, const std::string& appointmentDescription);
+    
+    // view this appointment's details
+    void viewSelf(const std::string& fileNameWithPath) const;
 
--User [Blueprint]
--Admin
--Veterinary
--Staff
--Guest
+    // save appointment's details
+    void saveSelf() const;
 
--------------------
-
-Classes structure
-
-PET:
-ID
-Name
-Owner
-Last appointment
-
-USER:
-
-ID
-TypeOfUser
-FirstName
-LastName
-Login
-Password
-DOB
-ContactINfo
-
-methods:
-
-DisplaySelfInfo() - will allow users to display their information
-SaveToDB() - will save user to the database when making a new one
-
-ALL USER UNDER WILL INHERIT FROM USER
-
-ADMIN:
-methods:
-*These will be imported from the features*
-
-addPet
-viewPetData
-updatePetData
-deletePetData
-
-addOwner
-viewOwnerData
-updateOwnerData
-deleteOwnerData
-
-scheduleAppointment
-modifyAppointment
-cancelAppointment
-viewAppointments
-
-saveFIle()
-
-VETERINARY:
-
-addPet
-viewPetData
-updatePetData
-deletePetData
-
-scheduleAppointment
-modifyAppointment
-cancelAppointment
-viewAppointments
-
-viewOwnerData
-updateOwnerData
-
-STAFF:
-
-scheduleAppointment
-modifyAppointment
-cancelAppointment
-viewAppointments
-
-viewOwnerData
-viewPetData
-
-
-all of these will functionalities will be their own seperate classes, check features.h
-*/
+    private:
+    std::string petName;
+    std::string ownerUsername;
+    std::string appointmentDate;
+    std::string appointmentDescription;
+};

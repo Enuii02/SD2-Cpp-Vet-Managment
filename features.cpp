@@ -168,7 +168,7 @@ void Save::saveUser(std::string uname, std::string r, std::string pwd,
 // Update section
 //-------------------------------------------------
 
-void Update::updateSelf(std::string uname, std::string fileName){
+void Update::updateUser(std::string uname, std::string fileName){
 
     //reads the file
     vector<string> details;

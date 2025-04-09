@@ -35,7 +35,7 @@ int main() {
     // view.viewAllPets("Data/pets.txt");
 
     Update update;
-    update.updateSelf("john_doe", "Data/staffacc.txt");
+    update.updateUser("john_doe", "Data/staffacc.txt");
 
     //-------------------------------------------------
 

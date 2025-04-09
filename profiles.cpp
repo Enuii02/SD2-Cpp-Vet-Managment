@@ -38,3 +38,27 @@ Pet::Pet(const std::string& name, const std::string& ownerUsername,
         Save save;
         save.savePet(name, ownerUsername, appointmentsHistory, DOB, breed);
     }
+
+//-------------------------------------------------
+// Appointment section
+//-------------------------------------------------
+
+class Appointment
+{   
+    public:
+    // constructor
+    Appointment(const std::string& petName, const std::string& ownerUsername, 
+                const std::string& appointmentDate, const std::string& appointmentDescription);
+    
+    // view this appointment's details
+    // TODO: viewIndividualAppointment in features.h/cpp
+
+    // save appointment's details
+    //TODO saveAppointment in features.h/cpp
+
+    private:
+    std::string petName;
+    std::string ownerUsername;
+    std::string appointmentDate;
+    std::string appointmentDescription;
+};

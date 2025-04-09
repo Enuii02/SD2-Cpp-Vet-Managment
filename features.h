@@ -9,6 +9,9 @@ class View{
     void viewAllUsers(std::string fileName);
 
     void viewAllPets(std::string fileName);
+
+    //TODO: viewIndividualAppointment
+    //TODO: viewAllAppointments
 };
 
 
@@ -20,16 +23,22 @@ class Save{
 
     void savePet(std::string name, std::string ownerUsername, std::string appointmentsHistory, 
         std::string DOB, std::string breed);
+
+    //TODO saveAppointment
 };
 
 class Update{
     public:
 
-    void updateSelf(std::string uname, std::string filename);
+    void updateUser(std::string uname, std::string filename);
+
+    //TODO updatePet
 };
 
 class Delete{
     public:
 
     void deleteProfile(std::string uname);
+    //TODO deletePet
+    //TODO deleteAppointment
 };
