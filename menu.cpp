@@ -9,7 +9,8 @@
 #include "menu.h"
 
 Update update;
-
+Delete deleteInstance;
+View view;
 
 //-------------------------------------------------
 // Account Management Functions
@@ -290,8 +291,8 @@ void adminAppointmentManagementMenu() {
         switch (choice) {
             case 1: scheduleAppointment(); break;
             case 2: modifyAppointment(); break;
-            case 3: std::cout << "Redirecting to Cancel Appointment..." << std::endl; break;
-            case 4: std::cout << "Redirecting to View Appointment Records..." << std::endl; break;
+            case 3: cancelAppointment(); break;
+            case 4: viewAppointmentRecordsFullAcess(); break;
             case 0: std::cout << "Returning to Admin Menu..." << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
@@ -599,4 +600,61 @@ void modifyAppointment() {
     update.updateAppointment(appointmentID, filePath);
 
     std::cout << "Appointment with ID " << appointmentID << " has been successfully modified!" << std::endl;
+}
+
+void cancelAppointment(){
+    std::cout << "\n--- Delete Appointment ---\n";
+
+    std::string identifier;
+    std::string fileName = "Data/appointments.txt";
+    std::string entryType = "Appointment";
+
+    std::cout << "Please enter appointment ID you would like to delete:";
+    std::cin >> identifier;
+
+    if (identifier.empty()) {
+        std::cout << "Invalid input. Please enter a valid appointment ID." << std::endl;
+        return;
+    }
+
+    deleteInstance.deleteEntry(identifier, fileName, entryType);
+};
+
+void viewAppointmentRecordsFullAcess() {
+    int choice;
+    std::string pathToFile = "Data/appointments.txt";
+    std::cout << "\n--- View Appointment Records ---\n";
+    std::cout << "1. View All Appointment Records\n";
+    std::cout << "2. View a Specific Appointment Record\n";
+    std::cout << "0. Back\n";
+    std::cout << "Enter your choice: ";
+    std::cin >> choice;
+
+    if (std::cin.fail()) {
+        std::cout << "Invalid input. Please enter a valid choice." << std::endl;
+        clearInput();  // Clear invalid input
+        return;
+    }
+
+    // Handle the user choice
+    switch (choice) {
+        case 1: {
+            view.viewAllAppointments(pathToFile);
+            break;
+        }
+        case 2: {
+            // Display a specific record
+            int identifier;
+            std::cout << "Enter Appointment ID: ";
+            std::cin >> identifier;
+            
+            view.viewIndividualAppointment(identifier, pathToFile);
+            break;
+        }
+        case 0:
+            std::cout << "Returning to previous menu...\n";
+            break;
+        default:
+            std::cout << "Invalid choice. Please try again.\n";
+    }
 }

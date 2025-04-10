@@ -118,7 +118,7 @@ void View::viewAllAppointments(std::string fileName) {
         std::cerr << "Failed to open file: " << fileName << std::endl;
         return;
     }
-    std::cout << "== Displaying all appointments from " << fileName << " ==" << std::endl;
+    std::cout << "\n== Displaying all appointments from " << fileName << " ==" << std::endl;
     std::cout << "Format: appointmentID, petName, ownerUsername, appointmentDate, description" << std::endl << std::endl;
     std::string output;
     while (std::getline(inFile, output)) {

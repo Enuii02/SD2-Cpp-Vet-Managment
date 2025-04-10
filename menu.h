@@ -29,5 +29,6 @@ void ensureFileExists(const std::string& filename);
 
 void scheduleAppointment();
 void modifyAppointment();
-
+void cancelAppointment();
+void viewAppointmentRecordsFullAcess();
 #endif
