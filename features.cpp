@@ -7,30 +7,36 @@
 
 using namespace std;
 
-
-//-------------------------------------------------
-// View section
-//-------------------------------------------------
-
-void View::viewIndividual(string name, string fileName){
-
-    vector<string> details;
-    string line;
-    string token;
-    ifstream MyReadFile(fileName);
-    if (!MyReadFile.is_open()) {
-        std::cerr << "Failed to open file: " << fileName << std::endl;
-        return;
-    }
-
-    while (getline (MyReadFile, line)) {
-        details.clear();
-        stringstream ss(line);
-
-        while (getline(ss, token, ',')){
-            details.push_back(token);
-        }
-
+        #include <iostream>
+        #include <fstream>
+        #include <string>
+        #include <sstream>
+        #include <vector>
+        #include "features.h"
+        
+        using namespace std;
+        
+        //-------------------------------------------------
+        // View section
+        //-------------------------------------------------
+        
+        void View::viewIndividual(string name, string fileName) {
+            vector<string> details;
+            string line, token;
+            ifstream MyReadFile(fileName);
+            if (!MyReadFile.is_open()) {
+                cerr << "Failed to open file: " << fileName << endl;
+                return;
+            }
+        
+            while (getline(MyReadFile, line)) {
+                details.clear();
+                stringstream ss(line);
+        
+                while (getline(ss, token, ',')) {
+                    details.push_back(token);
+                }
+        
         /*
         These can be easly adjusted if we change the formats
         the users.
@@ -43,6 +49,171 @@ void View::viewIndividual(string name, string fileName){
         // details[4] = email
         // details[5] = phone
     
+                // Check if it is a user/staff record.
+                if (!details.empty() && details[0] == name && details.size() == 6) {
+                    cout << "========================================" << endl;
+                    cout << "Details for " << name << ":" << endl;
+                    cout << "Username: " << details[0] << endl;
+                    cout << "Role: " << details[1] << endl;
+                    cout << "Password: " << details[2] << endl;
+                    cout << "Full Name: " << details[3] << endl;
+                    cout << "Email: " << details[4] << endl;
+                    cout << "Phone Number: " << details[5] << endl;
+                    cout << "========================================" << endl;
+                }
+                // Check if it is a pet record (assuming fileName is "pets.txt")
+                else if (!details.empty() && details[0] == name && fileName == "pets.txt") {
+                    cout << "Details for " << name << ":" << endl;
+                    cout << "Name: " << details[0] << endl;
+                    cout << "Owner Username: " << details[1] << endl;
+                    cout << "Appointment History: " << details[2] << endl;
+                    cout << "DOB: " << details[3] << endl;
+                    cout << "Breed: " << details[4] << endl;
+                }
+            
+                cout << "Info from: " << fileName << endl;
+            }
+            MyReadFile.close();
+        }
+        
+        void View::viewAllUsers(string fileName) {
+            ifstream MyReadFile(fileName);
+            string output;
+        
+            cout << "== Displaying: " << fileName << " ==" << endl;
+            cout << "Format: username, role, password, full name, email, phone number" << endl << endl;
+            while (getline(MyReadFile, output)) {
+                cout << output << endl;
+            }
+        }
+        
+        void View::viewAllPets(string fileName) {
+            ifstream MyReadFile(fileName);
+            string output;
+        
+            cout << "== Displaying: " << fileName << " ==" << endl;
+            cout << "Format: name, ownerUsername, appointmentsHistory, DOB, breed" << endl << endl;
+            while (getline(MyReadFile, output)) {
+                cout << output << endl;
+            }
+        }
+        
+        //-------------------------------------------------
+        // New: Appointment View section
+        //-------------------------------------------------
+        
+        // View an individual appointment by appointmentID
+        void View::viewIndividualAppointment(int appointmentID, string fileName) {
+            ifstream inFile(fileName);
+            if (!inFile.is_open()) {
+                cerr << "Failed to open file: " << fileName << endl;
+                return;
+            }
+            
+            string line;
+            bool found = false;
+            while (getline(inFile, line)) {
+                vector<string> details;
+                string token;
+                stringstream ss(line);
+                while (getline(ss, token, ',')) {
+                    details.push_back(token);
+                }
+                
+                // Check if details are valid and if the first token matches appointmentID
+                if (!details.empty() && details.size() >= 5) {
+                    try {
+                        int currentID = stoi(details[0]);
+                        if (currentID == appointmentID) {
+                            cout << "========================================" << endl;
+                            cout << "Appointment Details for ID: " << appointmentID << endl;
+                            cout << "Appointment ID: " << details[0] << endl;
+                            cout << "Pet Name: " << details[1] << endl;
+                            cout << "Owner Username: " << details[2] << endl;
+                            cout << "Appointment Date: " << details[3] << endl;
+                            cout << "Description: " << details[4] << endl;
+                            cout << "========================================" << endl;
+                            found = true;
+                            break;
+                        }
+                    } catch (const std::exception& e) {
+                        cerr << "Error processing appointment ID: " << e.what() << endl;
+                        continue;
+                    }
+                }
+            }
+            if (!found) {
+                cout << "Appointment with ID " << appointmentID << " not found in " << fileName << "." << endl;
+            }
+            inFile.close();
+        }
+        
+        // View all appointments from a given file
+        void View::viewAllAppointments(string fileName) {
+            ifstream inFile(fileName);
+            if (!inFile.is_open()) {
+                cerr << "Failed to open file: " << fileName << endl;
+                return;
+            }
+            
+            cout << "== Displaying all appointments from " << fileName << " ==" << endl;
+            cout << "Format: appointmentID, petName, ownerUsername, appointmentDate, description" << endl << endl;
+            string output;
+            while (getline(inFile, output)) {
+                cout << output << endl;
+            }
+            inFile.close();
+        }
+        
+        //-------------------------------------------------
+        // Save section
+        //-------------------------------------------------
+        
+        void Save::saveUser(string uname, string r, string pwd, 
+                            string fname, string mail, string phone) {
+            string pathToFile;
+            try {
+                if (r == "admin" || r == "vet" || r == "staff" || r == "guest") {
+                    pathToFile = "Data/staffacc.txt";
+                } else if (r == "guest") {
+                    pathToFile = "Data/owner.txt";
+                } else {
+                    throw "Error, no valid user role, select an appropriate role.";
+                }
+            } catch (const char* e) {
+                cerr << e << '\n';
+            }
+        
+            vector<string> details;
+            string line, token;
+            ifstream MyReadFile(pathToFile);
+            if (!MyReadFile.is_open()) {
+                cerr << "Failed to open file: " << pathToFile << endl;
+                return;
+            }
+            
+            // Check if the profile already exists in the database
+            while (getline(MyReadFile, line)) {
+                details.clear();
+                stringstream ss(line);
+                while (getline(ss, token, ',')) {
+                    details.push_back(token);
+                }
+                if (!details.empty() && details[0] == uname) {
+                    cout << "User already exists, please login!" << endl;
+                    return;
+                }
+            }
+            MyReadFile.close();
+        
+            // Save the file
+            ofstream MyFile(pathToFile, ios::app);
+            MyFile << uname << "," << r << "," << pwd << "," << fname << "," << mail << "," << phone << "\n";
+            MyFile.close();
+        }
+        
+        void Save::savePet(string name, string ownerUsername, string appointmentsHistory, 
+                           string DOB, string breed) {
         //check if user/staff
         if (!details.empty() && details[0] == name && details.size() == 6) {
             std::cout << "========================================" << endl;
@@ -182,10 +353,9 @@ void Save::saveUser(std::string uname, std::string r, std::string pwd,
     void Save::savePet(std::string name, std::string ownerUsername, std::string appointmentsHistory, 
         std::string DOB, std::string breed){
             string pathToFile = "Data/pets.txt";
-            ofstream MyFile(pathToFile, std::ios::app);
-
+            ofstream MyFile(pathToFile, ios::app);
             if (!MyFile.is_open()) {
-                std::cerr << "Failed to open file: " << "pets.txt" << std::endl;
+                cerr << "Failed to open file: pets.txt" << endl;
                 return;
             }
 
@@ -194,7 +364,6 @@ void Save::saveUser(std::string uname, std::string r, std::string pwd,
             } 
     
             MyFile << name << "," << ownerUsername << "," << appointmentsHistory << "," << DOB << "," << breed << "\n";
-    
             MyFile.close();
         }
     
