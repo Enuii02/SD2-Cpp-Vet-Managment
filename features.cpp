@@ -100,6 +100,42 @@ void View::viewAllPets(std::string fileName){
 // Save section
 //-------------------------------------------------
 
+bool checkForDuplicates(const string& identifier, const string& pathToFile) {
+    vector<string> details;
+    string line;
+    string token;
+    ifstream MyReadFile(pathToFile);
+    if (!MyReadFile.is_open()) {
+        std::cerr << "Failed to open file: " << pathToFile << std::endl;
+        return false;  // Changed from 'return;' to 'return false;'
+    }
+    
+    // Check if the profile already exists in the database
+    while (getline(MyReadFile, line)) {
+        details.clear();
+        stringstream ss(line);
+
+        while (getline(ss, token, ',')) {
+            details.push_back(token);
+        }
+
+        if (!details.empty() && details[0] == identifier && (pathToFile == "Data/staffacc.txt" || pathToFile == "Data/owner.txt")) {  // check if user/staff
+            cout << "User " << identifier << " already exists, please login!" << endl;
+            return true;
+        }
+        else if (!details.empty() && details[0] == identifier && pathToFile == "Data/pets.txt") {  // check if pet
+            cout << "Pet " << identifier << " already exists, please login!" << endl;
+            return true;
+        }
+        else if (!details.empty() && details[0] == identifier && pathToFile == "Data/appointments.txt") {  // check if appointment
+            cout << "Appointment " << identifier << " already exists, please login!" << endl;
+            return true;
+        }
+    }
+    MyReadFile.close(); 
+    return false;
+}
+
 void Save::saveUser(std::string uname, std::string r, std::string pwd, 
     std::string fname, std::string mail, std::string phone){
         string pathToFile;
@@ -130,20 +166,10 @@ void Save::saveUser(std::string uname, std::string r, std::string pwd,
             return;
         }
         
-        //Check if the profile already exists in the database
-        while (getline (MyReadFile, line)) {
-            details.clear();
-            stringstream ss(line);
-    
-            while (getline(ss, token, ',')){
-                details.push_back(token);
-            }
+       if(checkForDuplicates(uname, pathToFile)){
+        return;
+       } 
 
-            if(details[0] == uname){
-                cout << "User already exists, please login!" << endl;
-                return;
-            }
-        }
         // save the file
         ofstream MyFile(pathToFile, std::ios::app);
 
@@ -162,6 +188,10 @@ void Save::saveUser(std::string uname, std::string r, std::string pwd,
                 std::cerr << "Failed to open file: " << "pets.txt" << std::endl;
                 return;
             }
+
+            if(checkForDuplicates(name, pathToFile)){
+                return;
+            } 
     
             MyFile << name << "," << ownerUsername << "," << appointmentsHistory << "," << DOB << "," << breed << "\n";
     
@@ -174,6 +204,13 @@ void Save::saveUser(std::string uname, std::string r, std::string pwd,
             std::cerr << "Failed to open file: " << "appointments.txt" << std::endl;
             return;
         }
+
+        string IdToString = to_string(appointmentID);
+
+        if(checkForDuplicates(IdToString, "Data/appointments.txt")){
+            return;
+        } 
+
         MyFile << appointmentID << "," << petName << "," << ownerUsername << "," << appopintmentDate << "," << appointmentDescription << "\n";
 
         MyFile.close();
@@ -424,36 +461,32 @@ void Update::updatePet(std::string petName, std::string fileName) {
 // Delete section
 //-------------------------------------------------
 
-void Delete::deleteProfile(std::string uname){
-    cout << "Deleting profile: " << uname;
-}
-
-void Delete::deletePet(const std::string& petName, const std::string& fileName) {
+void Delete::deleteEntry(const std::string& identifier, const std::string& fileName, const std::string& entryType) {
     std::ifstream inputFile(fileName);
     std::vector<std::string> allLines;
     std::string line;
+    bool found = false;
 
     if (!inputFile.is_open()) {
         std::cerr << "Error opening file: " << fileName << std::endl;
         return;
     }
 
-    // Read all lines and filter out the pet to delete
     while (getline(inputFile, line)) {
         std::stringstream ss(line);
         std::string token;
-        getline(ss, token, ','); // token holds the pet name
+        getline(ss, token, ','); // Grab the first item in the line (assumed unique identifier)
 
-        if (token != petName) {
+        if (token != identifier) {
             allLines.push_back(line);
         } else {
-            std::cout << "Pet '" << petName << "' found and deleted." << std::endl;
+            std::cout << entryType << " '" << identifier << "' found and deleted." << std::endl;
+            found = true;
         }
     }
 
     inputFile.close();
 
-    // Write filtered lines back to the file
     std::ofstream outputFile(fileName);
     if (!outputFile.is_open()) {
         std::cerr << "Error writing to file: " << fileName << std::endl;
@@ -465,5 +498,8 @@ void Delete::deletePet(const std::string& petName, const std::string& fileName) 
     }
 
     outputFile.close();
+
+    if (!found) {
+        std::cout << entryType << " '" << identifier << "' not found in file." << std::endl;
+    }
 }
-    

@@ -39,9 +39,5 @@ class Update{
 class Delete{
     public:
 
-    void deleteProfile(std::string uname);
-
-    void deletePet(const std::string& petName, const std::string& fileName);
-    
-    //TODO deleteAppointment
+    void deleteEntry(const std::string& identifier, const std::string& fileName, const std::string& entryType);
 };

@@ -1,1 +1,4 @@
-1,Buddy,john_doe,2025-04-14 10:00 AM,Routine checkup
+1,Bella,user1,2025-04-11,Annual checkup
+2,Max,user2,2025-04-12,Vaccination
+4,Charlie,user4,2025-04-14,Skin allergy consultation
+5,Rocky,user5,2025-04-15,Follow-up visit
