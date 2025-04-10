@@ -65,7 +65,12 @@
     "xloctime": "cpp",
     "xmemory": "cpp",
     "xtr1common": "cpp",
-    "xutility": "cpp"
+    "xutility": "cpp",
+    "chrono": "cpp",
+    "filesystem": "cpp",
+    "forward_list": "cpp",
+    "iomanip": "cpp",
+    "ratio": "cpp"
   },
   "C_Cpp_Runner.msvcBatchPath": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat"
 }

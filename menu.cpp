@@ -81,7 +81,9 @@ void createNewAccount() {
 
 void alreadyHaveAccount() {
     std::cout << "\nRedirecting to Login Menu..." << std::endl;
+    loginMenu();  // Call the actual loginMenu function
 }
+
 
 
 //-------------------------------------------------
@@ -173,7 +175,7 @@ void mainMenu() {
         clearInput();
         switch (choice) {
             case 1: loginMenu(); break;
-            case 2: signUpMenu(); break;
+            case 2: signUpMenu();
             case 3: std::cout << "Exiting program. Goodbye!" << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
@@ -232,7 +234,7 @@ void signUpMenu() {
         switch (choice) {
             case 1: createNewAccount(); break;
             case 2: alreadyHaveAccount(); break;
-            case 0: std::cout << "Returning to Main Menu..." << std::endl; break;
+            case 0: std::cout << "Returning to Main Menu..." << std::endl;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
     } while (choice != 0);
