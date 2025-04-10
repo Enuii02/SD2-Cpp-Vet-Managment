@@ -39,3 +39,4 @@ public:
 // Account management functions (for sign up)
 void createNewAccount();
 void alreadyHaveAccount();
+bool checkForDuplicates(const std::string& identifier, const std::string& pathToFile);

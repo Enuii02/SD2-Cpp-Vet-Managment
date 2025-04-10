@@ -147,7 +147,7 @@ bool checkForDuplicates(const std::string& identifier, const std::string& pathTo
             details.push_back(token);
         }
         if (!details.empty() && details[0] == identifier) {
-            std::cout << "Entry " << identifier << " already exists, please login!" << std::endl;
+            std::cout << "ID/Username/Name " << identifier << " already exists, please try again." << std::endl;
             return true;
         }
     }
@@ -467,74 +467,3 @@ void Delete::deleteEntry(const std::string& identifier, const std::string& fileN
     }
 }
 
-//-------------------------------------------------
-// Account Management Functions
-//-------------------------------------------------
-
-void createNewAccount() {
-    std::string fullName, email, phone, username, password, confirmPassword;
-    int accountTypeChoice;
-    std::cout << "\n--- Create New Account ---" << std::endl;
-    std::cout << "Enter Full Name: ";
-    std::getline(std::cin, fullName);
-    std::cout << "Enter Email Address: ";
-    std::getline(std::cin, email);
-    std::cout << "Enter Phone Number (optional): ";
-    std::getline(std::cin, phone);
-    std::cout << "Choose Username: ";
-    std::getline(std::cin, username);
-    std::cout << "Choose Password: ";
-    std::getline(std::cin, password);
-    std::cout << "Confirm Password: ";
-    std::getline(std::cin, confirmPassword);
-    if (password != confirmPassword) {
-        std::cout << "Passwords do not match. Account creation failed." << std::endl;
-        return;
-    }
-    std::cout << "\nChoose Account Type:\n1. Guest\n2. Staff (Admin/Staff/Veterinary)" << std::endl;
-    std::cout << "Enter your choice: ";
-    std::cin >> accountTypeChoice;
-    std::cin.ignore();
-    if (accountTypeChoice == 1) {
-        std::string extraInfo = fullName + "," + email + "," + phone;
-        if (!checkForDuplicates(username, "Data/owner.txt")) {
-            std::ofstream outfile("Data/owner.txt", std::ios::app);
-            outfile << username << "," << password << "," << extraInfo << "\n";
-            outfile.close();
-            std::cout << "Guest account created successfully!" << std::endl;
-        } else {
-            std::cout << "Account already exists. Please login." << std::endl;
-        }
-    }
-    else if (accountTypeChoice == 2) {
-        int roleChoice;
-        std::string role;
-        std::cout << "Select Role:\n1. Admin\n2. Staff\n3. Veterinary" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> roleChoice;
-        std::cin.ignore();
-        switch (roleChoice) {
-            case 1: role = "Admin"; break;
-            case 2: role = "Staff"; break;
-            case 3: role = "Veterinary"; break;
-            default:
-                std::cout << "Invalid role choice. Account creation failed." << std::endl;
-                return;
-        }
-        if (!checkForDuplicates(username, "Data/staffacc.txt")) {
-            std::ofstream outfile("Data/staffacc.txt", std::ios::app);
-            outfile << username << "," << password << "," << role << "\n";
-            outfile.close();
-            std::cout << role << " account created successfully!" << std::endl;
-        } else {
-            std::cout << "Account already exists. Please login." << std::endl;
-        }
-    }
-    else {
-        std::cout << "Invalid account type choice. Account creation failed." << std::endl;
-    }
-}
-
-void alreadyHaveAccount() {
-    std::cout << "\nRedirecting to Login Menu..." << std::endl;
-}

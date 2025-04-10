@@ -5,11 +5,84 @@
 #include <limits>
 #include <vector>
 #include "features.h"
+#include "profiles.h"
 #include "menu.h"
 
-// Forward declarations for account functions in features.cpp
-extern void createNewAccount();
-extern void alreadyHaveAccount();
+Update update;
+
+
+//-------------------------------------------------
+// Account Management Functions
+//-------------------------------------------------
+
+void createNewAccount() {
+    std::string fullName, email, phone, username, password, confirmPassword;
+    int accountTypeChoice;
+    std::cout << "\n--- Create New Account ---" << std::endl;
+    std::cout << "Enter Full Name: ";
+    std::getline(std::cin, fullName);
+    std::cout << "Enter Email Address: ";
+    std::getline(std::cin, email);
+    std::cout << "Enter Phone Number (optional): ";
+    std::getline(std::cin, phone);
+    std::cout << "Choose Username: ";
+    std::getline(std::cin, username);
+    std::cout << "Choose Password: ";
+    std::getline(std::cin, password);
+    std::cout << "Confirm Password: ";
+    std::getline(std::cin, confirmPassword);
+    if (password != confirmPassword) {
+        std::cout << "Passwords do not match. Account creation failed." << std::endl;
+        return;
+    }
+    std::cout << "\nChoose Account Type:\n1. Guest\n2. Staff (Admin/Staff/Veterinary)" << std::endl;
+    std::cout << "Enter your choice: ";
+    std::cin >> accountTypeChoice;
+    std::cin.ignore();
+    if (accountTypeChoice == 1) {
+        std::string extraInfo = fullName + "," + email + "," + phone;
+        if (!checkForDuplicates(username, "Data/owner.txt")) {
+            std::ofstream outfile("Data/owner.txt", std::ios::app);
+            outfile << username << "," << password << "," << extraInfo << "\n";
+            outfile.close();
+            std::cout << "Guest account created successfully!" << std::endl;
+        } else {
+            std::cout << "Account already exists. Please login." << std::endl;
+        }
+    }
+    else if (accountTypeChoice == 2) {
+        int roleChoice;
+        std::string role;
+        std::cout << "Select Role:\n1. Admin\n2. Staff\n3. Veterinary" << std::endl;
+        std::cout << "Enter your choice: ";
+        std::cin >> roleChoice;
+        std::cin.ignore();
+        switch (roleChoice) {
+            case 1: role = "Admin"; break;
+            case 2: role = "Staff"; break;
+            case 3: role = "Veterinary"; break;
+            default:
+                std::cout << "Invalid role choice. Account creation failed." << std::endl;
+                return;
+        }
+        if (!checkForDuplicates(username, "Data/staffacc.txt")) {
+            std::ofstream outfile("Data/staffacc.txt", std::ios::app);
+            outfile << username << "," << password << "," << role << "\n";
+            outfile.close();
+            std::cout << role << " account created successfully!" << std::endl;
+        } else {
+            std::cout << "Account already exists. Please login." << std::endl;
+        }
+    }
+    else {
+        std::cout << "Invalid account type choice. Account creation failed." << std::endl;
+    }
+}
+
+void alreadyHaveAccount() {
+    std::cout << "\nRedirecting to Login Menu..." << std::endl;
+}
+
 
 //-------------------------------------------------
 // Utility Functions
@@ -39,10 +112,20 @@ bool checkCredentials(const std::string& username, const std::string& password, 
         if (line.empty())
             continue;
         std::stringstream ss(line);
+
+        // std::cout << line << std::endl; // test, delete later
+
         std::string fileUsername, filePassword, fileRole;
         std::getline(ss, fileUsername, ',');
+        if(fileUsername != username){
+            continue;
+        }
+        std::getline(ss, fileRole, ',');
         std::getline(ss, filePassword, ',');
-        std::getline(ss, fileRole, ','); // For guests, fileRole holds extra info.
+
+        // std::cout << fileUsername << " " << filePassword << fileRole << std::endl; // test, delete later
+        // std::cout << username << " " << password << expectedRole << std::endl; // test, delete later
+
         if (fileUsername == username && filePassword == password) {
             if (expectedRole == "Guest" || fileRole == expectedRole)
                 return true;
@@ -52,13 +135,14 @@ bool checkCredentials(const std::string& username, const std::string& password, 
 }
 
 bool loginUser(const std::string& expectedRole) {
-    std::string filename = (expectedRole == "Guest") ? "Data/owner.txt" : "Data/staffacc.txt";
+    std::string filename = (expectedRole == "guest") ? "Data/owner.txt" : "Data/staffacc.txt";
     ensureFileExists(filename);
     std::string username, password;
     std::cout << "Enter username: ";
     std::getline(std::cin, username);
     std::cout << "Enter password: ";
     std::getline(std::cin, password);
+
     if (checkCredentials(username, password, filename, expectedRole)) {
         std::cout << "Login successful as " << expectedRole << "!" << std::endl;
         return true;
@@ -117,10 +201,10 @@ void loginMenu() {
         }
         clearInput();
         switch (choice) {
-            case 1: if (loginUser("Admin")) adminMenu(); break;
-            case 2: if (loginUser("Staff")) staffMenu(); break;
-            case 3: if (loginUser("Veterinary")) veterinaryMenu(); break;
-            case 4: if (loginUser("Guest")) guestMenu(); break;
+            case 1: if (loginUser("admin")) adminMenu(); break;
+            case 2: if (loginUser("staff")) staffMenu(); break;
+            case 3: if (loginUser("veterinary")) veterinaryMenu(); break;
+            case 4: if (loginUser("guest")) guestMenu(); break;
             case 0: std::cout << "Returning to Main Menu..." << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
@@ -203,10 +287,9 @@ void adminAppointmentManagementMenu() {
             continue;
         }
         clearInput();
-        // Here, simply redirect (actual functionality should be implemented in features)
         switch (choice) {
-            case 1: std::cout << "Redirecting to Schedule Appointment..." << std::endl; break;
-            case 2: std::cout << "Redirecting to Modify Appointment..." << std::endl; break;
+            case 1: scheduleAppointment(); break;
+            case 2: modifyAppointment(); break;
             case 3: std::cout << "Redirecting to Cancel Appointment..." << std::endl; break;
             case 4: std::cout << "Redirecting to View Appointment Records..." << std::endl; break;
             case 0: std::cout << "Returning to Admin Menu..." << std::endl; break;
@@ -335,7 +418,7 @@ void staffAppointmentManagementMenu() {
         }
         clearInput();
         switch (choice) {
-            case 1: std::cout << "Redirecting to Schedule Appointment..." << std::endl; break;
+            case 1: scheduleAppointment(); break;
             case 2: std::cout << "Redirecting to Modify Appointment..." << std::endl; break;
             case 3: std::cout << "Redirecting to Cancel Appointment..." << std::endl; break;
             case 4: std::cout << "Redirecting to View Appointment Records..." << std::endl; break;
@@ -387,7 +470,7 @@ void veterinaryAppointmentManagementMenu() {
         }
         clearInput();
         switch (choice) {
-            case 1: std::cout << "Redirecting to Schedule Appointment..." << std::endl; break;
+            case 1: scheduleAppointment(); break;
             case 2: std::cout << "Redirecting to Modify Appointment..." << std::endl; break;
             case 3: std::cout << "Redirecting to Cancel Appointment..." << std::endl; break;
             case 4: std::cout << "Redirecting to View Appointment Records..." << std::endl; break;
@@ -396,6 +479,8 @@ void veterinaryAppointmentManagementMenu() {
         }
     } while (choice != 0);
 }
+
+
 
 void veterinaryOwnerManagementMenu() {
     int choice;
@@ -445,4 +530,73 @@ void guestMenu() {
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
     } while (choice != 0);
+}
+
+//-------------------------------------------------
+// Utility functions, these are connected to features.cpp
+//-------------------------------------------------
+
+
+void scheduleAppointment() {
+
+    int appointmentID;
+    std::string petName;
+    std::string ownerUsername;
+    std::string appointmentDate;
+    std::string appointmentDescription;
+
+    std::cout << "\n--- Schedule Appointment ---\n";
+
+    // Get Appointment ID
+    std::cout << "Enter Appointment ID (integer): ";
+    while (!(std::cin >> appointmentID)) {
+        std::cout << "Invalid input. Please enter a valid integer for Appointment ID: ";
+        clearInput();
+    }
+
+    std::string stringID = std::to_string(appointmentID);
+    if(checkForDuplicates(stringID, "Data/appointments")) {
+        return;
+    }
+    clearInput();
+
+    // Get Pet Name
+    std::cout << "Enter Pet Name: ";
+    std::getline(std::cin, petName);
+
+    // Get Owner Username
+    std::cout << "Enter Owner Username: ";
+    std::getline(std::cin, ownerUsername);
+
+    // Get Appointment Date
+    std::cout << "Enter Appointment Date (e.g., 2025-04-12): ";
+    std::getline(std::cin, appointmentDate);
+
+    // Get Appointment Description
+    std::cout << "Enter Appointment Description: ";
+    std::getline(std::cin, appointmentDescription);
+
+    Appointment appointment(appointmentID, petName, ownerUsername, appointmentDate, appointmentDescription);
+
+}
+
+void modifyAppointment() {
+    int appointmentID;
+    std::string filePath = "Data/appointments.txt";
+
+    // Ask the user for the Appointment ID
+    std::cout << "\n--- Modify Appointment ---\n";
+    std::cout << "Please enter the Appointment ID of the appointment you want to modify: ";
+
+    // Input validation for the Appointment ID
+    while (!(std::cin >> appointmentID)) {
+        std::cout << "Invalid input. Please enter a valid integer for Appointment ID: ";
+        std::cin.clear();  // Clear the error flag
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // Ignore invalid input
+    }
+
+    // Proceed to update the appointment using the given ID
+    update.updateAppointment(appointmentID, filePath);
+
+    std::cout << "Appointment with ID " << appointmentID << " has been successfully modified!" << std::endl;
 }

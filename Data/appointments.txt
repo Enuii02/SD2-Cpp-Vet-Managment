@@ -1,5 +1,8 @@
-1,Bella,user1,2025-04-11,Annual checkup
+1,Bella,user1,1996-12-12,Annual checkup
 2,Max,user2,2025-04-12,Vaccination
 4,Charlie,user4,2025-04-14,Skin allergy consultation
 5,Rocky,user5,2025-04-15,Follow-up visit
 1001,Fluffy,john_doe,2025-04-01,Routine Checkup
+123,Rathin,John Doe,2025-04-12,I hate my life
+89,y,y,y,y
+69,y,y,y,y
