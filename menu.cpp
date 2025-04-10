@@ -380,6 +380,90 @@ void adminSystemManagementMenu() {
     } while (choice != 0);
 }
 
+void viewOwnerRecords() {
+    std::string username;
+    std::cout << "Enter the username of the owner to view: ";
+    std::cin >> username;
+
+    View view;
+    view.viewUser(username, "data/users.txt");  // adjust path if different
+}
+
+void addOwner() {
+    std::string uname, role = "owner", pwd, fname, mail, phone;
+
+    std::cout << "Enter new owner's username: ";
+    std::cin >> uname;
+    std::cout << "Enter password: ";
+    std::cin >> pwd;
+    std::cout << "Enter full name: ";
+    std::cin.ignore(); // flush newline
+    std::getline(std::cin, fname);
+    std::cout << "Enter email: ";
+    std::cin >> mail;
+    std::cout << "Enter phone number: ";
+    std::cin >> phone;
+
+    Save save;
+    save.saveUser(uname, role, pwd, fname, mail, phone);
+    std::cout << "Owner profile added successfully.\n";
+}
+
+void updateOwner() {
+    std::string username;
+    std::cout << "Enter the username of the owner to update: ";
+    std::cin >> username;
+
+    Update update;
+    update.updateUser(username, "data/users.txt");  // adjust path if needed
+}
+
+void removeOwner() {
+    std::string username;
+    std::cout << "Enter the username of the owner to delete: ";
+    std::cin >> username;
+
+    Delete del;
+    del.deleteProfile(username);
+    std::cout << "Owner profile deleted successfully.\n";
+}
+
+void adminOwnerManagement() {
+    int choice;
+
+    do {
+        std::cout << "\n--- Admin: Owner Management ---\n";
+        std::cout << "1. View Owner Records\n";
+        std::cout << "2. Add New Owner\n";
+        std::cout << "3. Update Existing Owner\n";
+        std::cout << "4. Remove Owner\n";
+        std::cout << "0. Back to Admin Menu\n";
+        std::cout << "Select an option: ";
+        std::cin >> choice;
+
+        switch (choice) {
+            case 1:
+                viewOwnerRecords();
+                break;
+            case 2:
+                addOwner();
+                break;
+            case 3:
+                updateOwner();
+                break;
+            case 4:
+                removeOwner();
+                break;
+            case 0:
+                std::cout << "Returning to admin menu...\n";
+                break;
+            default:
+                std::cout << "Invalid option. Please try again.\n";
+        }
+
+    } while (choice != 0);
+}
+
 void staffMenu() {
     int choice;
     do {
