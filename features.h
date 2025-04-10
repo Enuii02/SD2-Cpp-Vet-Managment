@@ -4,7 +4,7 @@
 class View {
     public:
         // Existing view functions
-        void viewIndividual(std::string name, std::string fileName);
+        void viewIndividual(std::string name, std::string fileName); // works for pets and users
         void viewAllUsers(std::string fileName);
         void viewAllPets(std::string fileName);
 
@@ -27,6 +27,7 @@ class Update {
     public:
         void updateUser(std::string uname, std::string filename);
         void updatePet(std::string petName, std::string filename);
+        // TODO: updateAppointment
 };
 
 class Delete {

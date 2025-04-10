@@ -2,3 +2,4 @@
 2,Max,user2,2025-04-12,Vaccination
 4,Charlie,user4,2025-04-14,Skin allergy consultation
 5,Rocky,user5,2025-04-15,Follow-up visit
+1001,Fluffy,john_doe,2025-04-01,Routine Checkup
