@@ -387,7 +387,7 @@ void viewOwnerRecords() {
     std::cin >> username;
 
     View view;
-    view.viewUser(username, "data/users.txt");  // adjust path if different
+    view.viewIndividual(username, "data/owner.txt");  // adjust path if different
 }
 
 void addOwner() {
@@ -425,7 +425,7 @@ void removeOwner() {
     std::cin >> username;
 
     Delete del;
-    del.deleteProfile(username);
+    del.deleteEntry(username, "Data/owner.txt", "Owner");
     std::cout << "Owner profile deleted successfully.\n";
 }
 
