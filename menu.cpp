@@ -315,10 +315,10 @@ void adminMenu() {
     int choice;
     do {
         cout << "\n=== Admin Menu ===\n";
-        cout << "1. Appointment Management\n";
-        cout << "2. Owner Management\n";
-        cout << "3. Pet Management\n";
-        cout << "4. System Management\n";
+        cout << "1. Appointment Management[1]\n";
+        cout << "2. Owner Management[2]\n";
+        cout << "3. Pet Management[3]\n";
+        cout << "4. System Management[4]\n";
         cout << "0. Logout [0]\n";
         cout << "Enter your choice: ";
         cin >> choice;

@@ -88,7 +88,7 @@ void View::viewAllPets(std::string fileName) {
 }
 
 //-------------------------------------------------
-// New: Appointment View section
+// Appointment View section
 //-------------------------------------------------
 
 // View an individual appointment by appointmentID
