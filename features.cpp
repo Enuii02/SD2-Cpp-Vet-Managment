@@ -12,12 +12,12 @@
 void View::viewIndividual(std::string name, std::string fileName) {
     std::vector<std::string> details;
     std::string line, token;
-    std::ifstream MyReadFile(fileName);
-    if (!MyReadFile.is_open()) {
+    std::ifstream inFile(fileName);
+    if (!inFile.is_open()) {
         std::cerr << "Failed to open file: " << fileName << std::endl;
         return;
     }
-    while (std::getline(MyReadFile, line)) {
+    while (std::getline(inFile, line)) {
         details.clear();
         std::stringstream ss(line);
         while (std::getline(ss, token, ',')) {
@@ -36,7 +36,7 @@ void View::viewIndividual(std::string name, std::string fileName) {
             std::cout << "========================================" << std::endl;
         }
         // For a pet record (assumed file "pets.txt")
-        else if (!details.empty() && details[0] == name && fileName == "pets.txt") {
+        else if (!details.empty() && details[0] == name && fileName == "Data/pets.txt") {
             std::cout << "Details for " << name << ":" << std::endl;
             std::cout << "Name: " << details[0] << std::endl;
             std::cout << "Owner Username: " << details[1] << std::endl;
@@ -44,34 +44,31 @@ void View::viewIndividual(std::string name, std::string fileName) {
             std::cout << "DOB: " << details[3] << std::endl;
             std::cout << "Breed: " << details[4] << std::endl;
         }
-        std::cout << "Info from: " << fileName << std::endl;
     }
-    MyReadFile.close();
+    inFile.close();
 }
 
 void View::viewAllUsers(std::string fileName) {
-    std::ifstream MyReadFile(fileName);
+    std::ifstream inFile(fileName);
     std::string output;
     std::cout << "== Displaying: " << fileName << " ==" << std::endl;
     std::cout << "Format: username, role, password, full name, email, phone number" << std::endl << std::endl;
-    while (std::getline(MyReadFile, output)) {
+    while (std::getline(inFile, output)) {
         std::cout << output << std::endl;
     }
+    inFile.close();
 }
 
 void View::viewAllPets(std::string fileName) {
-    std::ifstream MyReadFile(fileName);
+    std::ifstream inFile(fileName);
     std::string output;
     std::cout << "== Displaying: " << fileName << " ==" << std::endl;
     std::cout << "Format: name, ownerUsername, appointmentsHistory, DOB, breed" << std::endl << std::endl;
-    while (std::getline(MyReadFile, output)) {
+    while (std::getline(inFile, output)) {
         std::cout << output << std::endl;
     }
+    inFile.close();
 }
-
-//-------------------------------------------------
-// Appointment View section
-//-------------------------------------------------
 
 void View::viewIndividualAppointment(int appointmentID, std::string fileName) {
     std::ifstream inFile(fileName);
@@ -131,20 +128,19 @@ void View::viewAllAppointments(std::string fileName) {
 }
 
 //-------------------------------------------------
-// Save section (unchanged)
+// Save section
 //-------------------------------------------------
 
-// A helper function to check for duplicate entries
+// Helper function to check for duplicate entries in a file.
 bool checkForDuplicates(const std::string& identifier, const std::string& pathToFile) {
     std::vector<std::string> details;
-    std::string line;
-    std::string token;
-    std::ifstream MyReadFile(pathToFile);
-    if (!MyReadFile.is_open()) {
-        std::cerr << "Failed to open file: " << pathToFile << std::endl;
+    std::string line, token;
+    std::ifstream inFile(pathToFile);
+    if (!inFile.is_open()) {
+        // If file doesn't exist, that is okay.
         return false;
     }
-    while (std::getline(MyReadFile, line)) {
+    while (std::getline(inFile, line)) {
         details.clear();
         std::stringstream ss(line);
         while (std::getline(ss, token, ',')) {
@@ -155,93 +151,78 @@ bool checkForDuplicates(const std::string& identifier, const std::string& pathTo
             return true;
         }
     }
-    MyReadFile.close();
+    inFile.close();
     return false;
 }
 
 void Save::saveUser(std::string uname, std::string r, std::string pwd, 
                      std::string fname, std::string mail, std::string phone) {
     std::string pathToFile;
-    try {
-        if (r == "admin" || r == "vet" || r == "staff" || r == "guest") {
-            pathToFile = "Data/staffacc.txt";
-        }
-        else if (r == "guest") {
-            pathToFile = "Data/owner.txt";
-        }
-        else {
-            throw "Error, no valid user role, select an appropriate role.";
-        }       
+    if (r == "admin" || r == "vet" || r == "staff" || r == "guest") {
+        pathToFile = "Data/staffacc.txt";
+    } else if (r == "guest") {
+        pathToFile = "Data/owner.txt";
+    } else {
+        std::cerr << "Error, no valid user role, select an appropriate role." << std::endl;
+        return;
     }
-    catch(const char* e) {
-        std::cerr << e << '\n';
-    }
-    std::ifstream MyReadFile(pathToFile);
-    if (!MyReadFile.is_open()) {
+    // Open file (create if necessary)
+    std::ofstream outFile(pathToFile, std::ios::app);
+    if (!outFile.is_open()) {
         std::cerr << "Failed to open file: " << pathToFile << std::endl;
         return;
     }
-    if(checkForDuplicates(uname, pathToFile)) {
-        return;
-    }
-    MyReadFile.close();
-    std::ofstream MyFile(pathToFile, std::ios::app);
-    MyFile << uname << "," << r << "," << pwd << "," << fname << "," << mail << "," << phone << "\n";
-    MyFile.close();
+    if (checkForDuplicates(uname, pathToFile)) return;
+    outFile << uname << "," << r << "," << pwd << "," << fname << "," << mail << "," << phone << "\n";
+    outFile.close();
 }
 
 void Save::savePet(std::string name, std::string ownerUsername, std::string appointmentsHistory, 
                    std::string DOB, std::string breed) {
     std::string pathToFile = "Data/pets.txt";
-    if(checkForDuplicates(name, pathToFile)) {
+    std::ofstream outFile(pathToFile, std::ios::app);
+    if (!outFile.is_open()) {
+        std::cerr << "Failed to open file: " << pathToFile << std::endl;
         return;
     }
-    std::ofstream MyFile(pathToFile, std::ios::app);
-    if (!MyFile.is_open()) {
-        std::cerr << "Failed to open file: pets.txt" << std::endl;
-        return;
-    }
-    MyFile << name << "," << ownerUsername << "," << appointmentsHistory << "," << DOB << "," << breed << "\n";
-    MyFile.close();
+    if (checkForDuplicates(name, pathToFile)) return;
+    outFile << name << "," << ownerUsername << "," << appointmentsHistory << "," << DOB << "," << breed << "\n";
+    outFile.close();
 }
 
 void Save::saveAppointment(int appointmentID, std::string petName, std::string ownerUsername, 
                            std::string appopintmentDate, std::string appointmentDescription) {
+    std::string pathToFile = "Data/appointments.txt";
+    std::ofstream outFile(pathToFile, std::ios::app);
+    if (!outFile.is_open()) {
+        std::cerr << "Failed to open file: " << pathToFile << std::endl;
+        return;
+    }
     std::string idStr = std::to_string(appointmentID);
-    if(checkForDuplicates(idStr, "Data/appointments.txt")) {
-        return;
-    }
-    std::ofstream MyFile("Data/appointments.txt", std::ios::app);
-    if (!MyFile.is_open()) {
-        std::cerr << "Failed to open file: appointments.txt" << std::endl;
-        return;
-    }
-    MyFile << appointmentID << "," << petName << "," << ownerUsername << "," << appopintmentDate << "," << appointmentDescription << "\n";
-    MyFile.close();
+    if (checkForDuplicates(idStr, pathToFile)) return;
+    outFile << appointmentID << "," << petName << "," << ownerUsername << "," << appopintmentDate << "," << appointmentDescription << "\n";
+    outFile.close();
 }
 
 //-------------------------------------------------
-// Update section (unchanged)
+// Update section
 //-------------------------------------------------
 
 void Update::updateUser(std::string uname, std::string fileName) {
-    // ... (existing implementation)
-    // (Code unchanged from your original updateUser method)
     std::vector<std::string> details;
-    std::string line;
-    std::string token;
-    std::ifstream MyReadFile(fileName);
-    while (std::getline(MyReadFile, line)) {
+    std::string line, token;
+    std::ifstream inFile(fileName);
+    while (std::getline(inFile, line)) {
         details.clear();
         std::stringstream ss(line);
         while(std::getline(ss, token, ',')) {
             details.push_back(token);
         }
-        if(!details.empty() && details[0] == uname && details.size() == 6) {
+        if (!details.empty() && details[0] == uname && details.size() == 6) {
             break;
         }
     }
-    MyReadFile.close();
+    inFile.close();
     std::string password = details[2];
     std::string userInputPassword;
     bool authenticated = false;
@@ -253,68 +234,51 @@ void Update::updateUser(std::string uname, std::string fileName) {
             authenticated = true;
             break;
         } else {
-            std::cout << "Invalid password, please try again. \n [Tries left: " << i << "]" << std::endl;
+            std::cout << "Invalid password, please try again. [Tries left: " << i << "]" << std::endl;
         }
     }
     if (!authenticated) {
-        std::cout << "You entered a wrong password too many times, try again later." << std::endl;
+        std::cout << "Too many failed attempts. Try again later." << std::endl;
         return;
     }
-    while (true) {
-        int choice;
-        std::cout << "\n--- What would you like to update in your profile? ---\n";
-        std::cout << "1. Username [1]\n";
-        std::cout << "2. Password [2]\n";
-        std::cout << "3. Email [3]\n";
-        std::cout << "4. Phone [4]\n";
-        std::cout << "0. Back [0]\n";
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (choice == 1) {
-            std::string newUsername;
-            std::cout << "Enter new username: ";
-            std::cin >> newUsername;
-            details[0] = newUsername;
-            std::cout << "Username updated to " << newUsername << std::endl;
-            break;
-        }
-        else if (choice == 2) {
-            std::string newPassword;
-            std::cout << "Enter new password: ";
-            std::cin >> newPassword;
-            details[2] = newPassword;
-            std::cout << "Password updated." << std::endl;
-            break;
-        }
-        else if (choice == 3) {
-            std::string newEmail;
-            std::cout << "Enter new email: ";
-            std::cin >> newEmail;
-            details[4] = newEmail;
-            std::cout << "Email updated to " << newEmail << std::endl;
-            break;
-        }
-        else if (choice == 4) {
-            std::string newPhone;
-            std::cout << "Enter new phone number: ";
-            std::cin >> newPhone;
-            details[5] = newPhone;
-            std::cout << "Phone number updated to " << newPhone << std::endl;
-            break;
-        }
-        else if (choice == 0) {
-            std::cout << "Returning to previous menu..." << std::endl;
-            break;
-        }
-        else {
-            std::cout << "Invalid option selected. Please try again.\n";
-        }
+    int choice;
+    std::cout << "\n--- Update Profile ---" << std::endl;
+    std::cout << "1. Username\n2. Password\n3. Email\n4. Phone\n0. Back\n";
+    std::cout << "Enter your choice: ";
+    std::cin >> choice;
+    if (choice == 1) {
+        std::string newUsername;
+        std::cout << "Enter new username: ";
+        std::cin >> newUsername;
+        details[0] = newUsername;
+    } else if (choice == 2) {
+        std::string newPassword;
+        std::cout << "Enter new password: ";
+        std::cin >> newPassword;
+        details[2] = newPassword;
+    } else if (choice == 3) {
+        std::string newEmail;
+        std::cout << "Enter new email: ";
+        std::cin >> newEmail;
+        details[4] = newEmail;
+    } else if (choice == 4) {
+        std::string newPhone;
+        std::cout << "Enter new phone number: ";
+        std::cin >> newPhone;
+        details[5] = newPhone;
+    } else if (choice == 0) {
+        std::cout << "Update cancelled." << std::endl;
+        return;
+    } else {
+        std::cout << "Invalid choice." << std::endl;
+        return;
     }
+    // Rebuild line and update file.
     std::string updatedLine = details[0] + "," + details[1] + "," + details[2] + "," +
-                    details[3] + "," + details[4] + "," + details[5];
+                              details[3] + "," + details[4] + "," + details[5];
     std::vector<std::string> allLines;
     std::ifstream inputFile(fileName);
-    while(std::getline(inputFile, line)){
+    while(std::getline(inputFile, line)) {
         allLines.push_back(line);
     }
     inputFile.close();
@@ -329,14 +293,13 @@ void Update::updateUser(std::string uname, std::string fileName) {
     }
     std::ofstream outputFile(fileName);
     for (const auto& l : allLines) {
-        outputFile << l << '\n';
+        outputFile << l << "\n";
     }
     outputFile.close();
-    std::cout << "Profile updated successfully. \n";
+    std::cout << "Profile updated successfully." << std::endl;
 }
 
 void Update::updatePet(std::string petName, std::string fileName) {
-    // ... (existing implementation)
     std::vector<std::string> details;
     std::string line, token;
     std::vector<std::string> allLines;
@@ -356,56 +319,36 @@ void Update::updatePet(std::string petName, std::string fileName) {
     }
     inputFile.close();
     if (!found) {
-        std::cout << "Pet not found.\n";
+        std::cout << "Pet not found." << std::endl;
         return;
     }
-    std::cout << "\n--- Current Pet Info ---\n";
-    std::cout << "Name: " << details[0] << std::endl;
-    std::cout << "Owner Username: " << details[1] << std::endl;
-    std::cout << "Appointment History: " << details[2] << std::endl;
-    std::cout << "DOB: " << details[3] << std::endl;
-    std::cout << "Breed: " << details[4] << std::endl;
-    while (true) {
-        int choice;
-        std::cout << "\n--- What would you like to update? ---\n";
-        std::cout << "1. Appointment History [1]\n";
-        std::cout << "2. Date of Birth (DOB) [2]\n";
-        std::cout << "3. Breed [3]\n";
-        std::cout << "0. Back [0]\n";
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
+    int choice;
+    std::cout << "\n--- Update Pet Details ---" << std::endl;
+    std::cout << "1. Appointment History\n2. DOB\n3. Breed\n0. Back\n";
+    std::cout << "Enter your choice: ";
+    std::cin >> choice;
+    if (choice == 1) {
+        std::string newHistory;
+        std::cout << "Enter new appointment history: ";
         std::cin.ignore();
-        if (choice == 1) {
-            std::string newHistory;
-            std::cout << "Enter new appointment history: ";
-            std::getline(std::cin, newHistory);
-            details[2] = newHistory;
-            std::cout << "Appointment history updated.\n";
-            break;
-        }
-        else if (choice == 2) {
-            std::string newDOB;
-            std::cout << "Enter new date of birth (YYYY-MM-DD): ";
-            std::cin >> newDOB;
-            details[3] = newDOB;
-            std::cout << "DOB updated.\n";
-            break;
-        }
-        else if (choice == 3) {
-            std::string newBreed;
-            std::cout << "Enter new breed: ";
-            std::cin >> newBreed;
-            details[4] = newBreed;
-            std::cout << "Breed updated.\n";
-            break;
-        }
-        else if (choice == 0) {
-            std::cout << "Returning to previous menu...\n";
-            return;
-        }
-        else {
-            std::cout << "Invalid option, please try again.\n";
-        }
+        std::getline(std::cin, newHistory);
+        details[2] = newHistory;
+    } else if (choice == 2) {
+        std::string newDOB;
+        std::cout << "Enter new date of birth (YYYY-MM-DD): ";
+        std::cin >> newDOB;
+        details[3] = newDOB;
+    } else if (choice == 3) {
+        std::string newBreed;
+        std::cout << "Enter new breed: ";
+        std::cin >> newBreed;
+        details[4] = newBreed;
+    } else if (choice == 0) {
+        std::cout << "Update cancelled." << std::endl;
+        return;
+    } else {
+        std::cout << "Invalid choice." << std::endl;
+        return;
     }
     std::string updatedLine = details[0] + "," + details[1] + "," + details[2] + "," + details[3] + "," + details[4];
     allLines.push_back(updatedLine);
@@ -414,16 +357,15 @@ void Update::updatePet(std::string petName, std::string fileName) {
         outputFile << l << "\n";
     }
     outputFile.close();
-    std::cout << "Pet profile updated successfully.\n";
+    std::cout << "Pet updated successfully." << std::endl;
 }
 
 void Update::updateAppointment(int appointmentID, const std::string& fileName) {
-    // ... (existing implementation)
     std::vector<std::string> details;
     std::string line, token;
-    std::ifstream MyReadFile(fileName);
+    std::ifstream inFile(fileName);
     bool found = false;
-    while (std::getline(MyReadFile, line)) {
+    while (std::getline(inFile, line)) {
         details.clear();
         std::stringstream ss(line);
         while (std::getline(ss, token, ',')) {
@@ -434,47 +376,40 @@ void Update::updateAppointment(int appointmentID, const std::string& fileName) {
             break;
         }
     }
-    MyReadFile.close();
+    inFile.close();
     if (!found) {
-        std::cout << "Appointment with ID " << appointmentID << " not found.\n";
+        std::cout << "Appointment with ID " << appointmentID << " not found." << std::endl;
         return;
     }
-    while (true) {
-        int choice;
-        std::cout << "\n--- What would you like to update for Appointment ID " << appointmentID << "? ---\n";
-        std::cout << "1. Appointment Date [1]\n";
-        std::cout << "2. Appointment Description [2]\n";
-        std::cout << "0. Back [0]\n";
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (choice == 1) {
-            std::string newDate;
-            std::cout << "Enter new appointment date: ";
-            std::cin >> newDate;
-            details[3] = newDate;
-            std::cout << "Appointment date updated to " << newDate << "\n";
-            break;
-        } else if (choice == 2) {
-            std::cin.ignore();
-            std::string newDescription;
-            std::cout << "Enter new appointment description: ";
-            std::getline(std::cin, newDescription);
-            details[4] = newDescription;
-            std::cout << "Appointment description updated.\n";
-            break;
-        } else if (choice == 0) {
-            std::cout << "Returning to menu...\n";
-            return;
-        } else {
-            std::cout << "Invalid option. Try again.\n";
-        }
+    int choice;
+    std::cout << "\n--- Update Appointment ---" << std::endl;
+    std::cout << "1. Date\n2. Description\n0. Back\n";
+    std::cout << "Enter your choice: ";
+    std::cin >> choice;
+    if (choice == 1) {
+        std::string newDate;
+        std::cout << "Enter new date: ";
+        std::cin >> newDate;
+        details[3] = newDate;
+    } else if (choice == 2) {
+        std::string newDescription;
+        std::cout << "Enter new description: ";
+        std::cin.ignore();
+        std::getline(std::cin, newDescription);
+        details[4] = newDescription;
+    } else if (choice == 0) {
+        std::cout << "Update cancelled." << std::endl;
+        return;
+    } else {
+        std::cout << "Invalid choice." << std::endl;
+        return;
     }
     std::vector<std::string> allLines;
-    std::ifstream inputFile(fileName);
-    while (std::getline(inputFile, line)) {
+    std::ifstream fileIn(fileName);
+    while (std::getline(fileIn, line)) {
         allLines.push_back(line);
     }
-    inputFile.close();
+    fileIn.close();
     std::string updatedLine = details[0] + "," + details[1] + "," + details[2] + "," + details[3] + "," + details[4];
     for (auto& l : allLines) {
         std::stringstream ss(l);
@@ -485,61 +420,61 @@ void Update::updateAppointment(int appointmentID, const std::string& fileName) {
             break;
         }
     }
-    std::ofstream outputFile(fileName);
+    std::ofstream fileOut(fileName);
     for (const auto& l : allLines) {
-        outputFile << l << "\n";
+        fileOut << l << "\n";
     }
-    outputFile.close();
-    std::cout << "Appointment updated successfully.\n";
+    fileOut.close();
+    std::cout << "Appointment updated successfully." << std::endl;
 }
 
 //-------------------------------------------------
-// Delete section (unchanged)
+// Delete section
 //-------------------------------------------------
 
 void Delete::deleteEntry(const std::string& identifier, const std::string& fileName, const std::string& entryType) {
-    std::ifstream inputFile(fileName);
+    std::ifstream inFile(fileName);
     std::vector<std::string> allLines;
     std::string line;
     bool found = false;
-    if (!inputFile.is_open()) {
+    if (!inFile.is_open()) {
         std::cerr << "Error opening file: " << fileName << std::endl;
         return;
     }
-    while (std::getline(inputFile, line)) {
+    while (std::getline(inFile, line)) {
         std::stringstream ss(line);
         std::string token;
         std::getline(ss, token, ',');
         if (token != identifier) {
             allLines.push_back(line);
         } else {
-            std::cout << entryType << " '" << identifier << "' found and deleted." << std::endl;
+            std::cout << entryType << " '" << identifier << "' deleted." << std::endl;
             found = true;
         }
     }
-    inputFile.close();
-    std::ofstream outputFile(fileName);
-    if (!outputFile.is_open()) {
+    inFile.close();
+    std::ofstream outFile(fileName);
+    if (!outFile.is_open()) {
         std::cerr << "Error writing to file: " << fileName << std::endl;
         return;
     }
     for (const std::string& l : allLines) {
-        outputFile << l << '\n';
+        outFile << l << "\n";
     }
-    outputFile.close();
+    outFile.close();
     if (!found) {
-        std::cout << entryType << " '" << identifier << "' not found in file." << std::endl;
+        std::cout << entryType << " '" << identifier << "' not found." << std::endl;
     }
 }
 
 //-------------------------------------------------
-// NEW: Account Management Functions (Moved from Menu)
+// Account Management Functions
 //-------------------------------------------------
 
 void createNewAccount() {
     std::string fullName, email, phone, username, password, confirmPassword;
     int accountTypeChoice;
-    std::cout << "\n--- Create New Account ---\n";
+    std::cout << "\n--- Create New Account ---" << std::endl;
     std::cout << "Enter Full Name: ";
     std::getline(std::cin, fullName);
     std::cout << "Enter Email Address: ";
@@ -553,12 +488,10 @@ void createNewAccount() {
     std::cout << "Confirm Password: ";
     std::getline(std::cin, confirmPassword);
     if (password != confirmPassword) {
-        std::cout << "Passwords do not match. Account creation failed.\n";
+        std::cout << "Passwords do not match. Account creation failed." << std::endl;
         return;
     }
-    std::cout << "\nChoose Account Type:\n";
-    std::cout << "1. Guest [1]\n";
-    std::cout << "2. Staff (Admin/Staff/Veterinary) [2]\n";
+    std::cout << "\nChoose Account Type:\n1. Guest\n2. Staff (Admin/Staff/Veterinary)" << std::endl;
     std::cout << "Enter your choice: ";
     std::cin >> accountTypeChoice;
     std::cin.ignore();
@@ -568,44 +501,40 @@ void createNewAccount() {
             std::ofstream outfile("Data/owner.txt", std::ios::app);
             outfile << username << "," << password << "," << extraInfo << "\n";
             outfile.close();
-            std::cout << "Guest account created successfully!\n";
+            std::cout << "Guest account created successfully!" << std::endl;
         } else {
-            std::cout << "Account already exists. Please login.\n";
+            std::cout << "Account already exists. Please login." << std::endl;
         }
     }
     else if (accountTypeChoice == 2) {
         int roleChoice;
         std::string role;
-        std::cout << "Select Role:\n";
-        std::cout << "1. Admin [1]\n";
-        std::cout << "2. Staff [2]\n";
-        std::cout << "3. Veterinary [3]\n";
+        std::cout << "Select Role:\n1. Admin\n2. Staff\n3. Veterinary" << std::endl;
         std::cout << "Enter your choice: ";
         std::cin >> roleChoice;
         std::cin.ignore();
         switch (roleChoice) {
-        case 1: role = "Admin"; break;
-        case 2: role = "Staff"; break;
-        case 3: role = "Veterinary"; break;
-        default:
-            std::cout << "Invalid role choice. Account creation failed.\n";
-            return;
+            case 1: role = "Admin"; break;
+            case 2: role = "Staff"; break;
+            case 3: role = "Veterinary"; break;
+            default:
+                std::cout << "Invalid role choice. Account creation failed." << std::endl;
+                return;
         }
         if (!checkForDuplicates(username, "Data/staffacc.txt")) {
             std::ofstream outfile("Data/staffacc.txt", std::ios::app);
             outfile << username << "," << password << "," << role << "\n";
             outfile.close();
-            std::cout << role << " account created successfully!\n";
+            std::cout << role << " account created successfully!" << std::endl;
         } else {
-            std::cout << "Account already exists. Please login.\n";
+            std::cout << "Account already exists. Please login." << std::endl;
         }
     }
     else {
-        std::cout << "Invalid account type choice. Account creation failed.\n";
+        std::cout << "Invalid account type choice. Account creation failed." << std::endl;
     }
 }
 
 void alreadyHaveAccount() {
-    std::cout << "\nRedirecting to Login Menu...\n";
-    // You could call loginMenu() here if desired.
+    std::cout << "\nRedirecting to Login Menu..." << std::endl;
 }

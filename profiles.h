@@ -1,58 +1,42 @@
-#include<string>
-#include"features.h"
+#ifndef PROFILES_H
+#define PROFILES_H
 
+#include <string>
+#include "features.h"
 
 //-------------------------------------------------
 // User Blueprint
 //-------------------------------------------------
 
-// All users will follow this formula:
-// username, role, password, fullName, email, phoneNumber
-// The order must be kept like that
-class User
-{
-    public:
-    // constructor
+class User {
+public:
+    // Constructor: creates a user and saves data via Save
     User(const std::string& uname, const std::string& r, const std::string& pwd,
-        const std::string& fname, const std::string& mail, const std::string& phone);
-    
-    // view this user's details
+         const std::string& fname, const std::string& mail, const std::string& phone);
+    // View this user's details
     void viewSelf(const std::string& fileNameWithPath) const;
-
-    // save user's details
-    void saveSelf(std::string uname, std::string r, std::string pwd,
-        std::string fname, std::string mail, std::string phone);
-
-    private:
+    // (Optional) Additional functions for saving/updating user data can be added here.
+private:
     std::string username;
     std::string role;
     std::string password;
     std::string fullName;
     std::string email;
     std::string phoneNumber;
-    
 };
 
 //-------------------------------------------------
-// Pet class
+// Pet Class
 //-------------------------------------------------
 
-class Pet
-{   
-    public:
-    // constructor
-    Pet(const std::string& name, const std::string& ownerUsername, const std::string& appointmentsHistory,
-        const std::string& DOB, const std::string& breed);
-    
-    // view this user's details
+class Pet {
+public:
+    // Constructor: creates a pet and saves data via Save
+    Pet(const std::string& name, const std::string& ownerUsername,
+        const std::string& appointmentsHistory, const std::string& DOB, const std::string& breed);
+    // View this pet's details
     void viewSelf(const std::string& fileNameWithPath) const;
-
-    // save user's details
-    void saveSelf(std::string uname, std::string r, std::string pwd,
-        std::string fname, std::string mail, std::string phone);
-
-
-    private:
+private:
     std::string name;
     std::string ownerUsername;
     std::string appointmentsHistory;
@@ -61,19 +45,20 @@ class Pet
 };
 
 //-------------------------------------------------
-// Appointment class
+// Appointment Class
 //-------------------------------------------------
 
 class Appointment {
-    public:
-        // Constructor
-        Appointment(int appointmentID, const std::string& petName, const std::string& ownerUsername, 
-                    const std::string& appointmentDate, const std::string& appointmentDescription);
-    
-    private:
-        int appointmentID;
-        std::string petName;
-        std::string ownerUsername;
-        std::string appointmentDate;
-        std::string appointmentDescription;
-    };
+public:
+    // Constructor: creates an appointment and saves data via Save
+    Appointment(int appointmentID, const std::string& petName, const std::string& ownerUsername,
+                const std::string& appointmentDate, const std::string& appointmentDescription);
+private:
+    int appointmentID;
+    std::string petName;
+    std::string ownerUsername;
+    std::string appointmentDate;
+    std::string appointmentDescription;
+};
+
+#endif

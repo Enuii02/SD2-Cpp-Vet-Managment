@@ -1,10 +1,6 @@
-// menu.h
 #ifndef MENU_H
 #define MENU_H
 
-#include <iostream>
-#include <string>
-#include <fstream>
 #include <string>
 
 void mainMenu();
@@ -24,8 +20,10 @@ void staffAppointmentManagementMenu();
 void veterinaryAppointmentManagementMenu();
 void veterinaryOwnerManagementMenu();
 
+// Account management functions declared in features.cpp
 void createNewAccount();
 void alreadyHaveAccount();
 
-void ensureFileExists(const std::string& filename);  
+void ensureFileExists(const std::string& filename);
+
 #endif
