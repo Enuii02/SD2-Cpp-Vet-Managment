@@ -41,7 +41,7 @@ class Pet
 {   
     public:
     // constructor
-    Pet(const std::string& name, const std::string& ownerUsername, const std::string& appointmentsHistry,
+    Pet(const std::string& name, const std::string& ownerUsername, const std::string& appointmentsHistory,
         const std::string& DOB, const std::string& breed);
     
     // view this user's details

@@ -317,6 +317,108 @@ void Update::updateUser(std::string uname, std::string fileName){
     cout << "Profile updated successfully. \n";
 }
 
+// Function to update a pet's details in the pets.txt file
+void Update::updatePet(std::string petName, std::string fileName) {
+    // Step 1: Read all pet data
+    vector<string> details;
+    string line, token;
+    vector<string> allLines;
+    bool found = false;
+
+    ifstream inputFile(fileName);
+
+    while (getline(inputFile, line)) {
+        details.clear();
+        stringstream ss(line);
+
+        while (getline(ss, token, ',')) {
+            details.push_back(token);
+        }
+
+        // Match pet by name
+        if (!details.empty() && details[0] == petName && details.size() == 5) {
+            found = true;
+            break;
+        }
+
+        // Store other lines
+        allLines.push_back(line);
+    }
+    inputFile.close();
+
+    if (!found) {
+        cout << "Pet not found.\n";
+        return;
+    }
+
+    // Show current details
+    cout << "\n--- Current Pet Info ---\n";
+    cout << "Name: " << details[0] << endl;
+    cout << "Owner Username: " << details[1] << endl;
+    cout << "Appointment History: " << details[2] << endl;
+    cout << "DOB: " << details[3] << endl;
+    cout << "Breed: " << details[4] << endl;
+
+    // Show menu for updates
+    while (true) {
+        int choice;
+        cout << "\n--- What would you like to update? ---\n";
+        cout << "1. Appointment History [1]\n";
+        cout << "2. Date of Birth (DOB) [2]\n";
+        cout << "3. Breed [3]\n";
+        cout << "0. Back [0]\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore(); // Clear newline from input buffer
+
+        if (choice == 1) {
+            string newHistory;
+            cout << "Enter new appointment history: ";
+            getline(cin, newHistory);
+            details[2] = newHistory;
+            cout << "Appointment history updated.\n";
+            break;
+        }
+        else if (choice == 2) {
+            string newDOB;
+            cout << "Enter new date of birth (YYYY-MM-DD): ";
+            cin >> newDOB;
+            details[3] = newDOB;
+            cout << "DOB updated.\n";
+            break;
+        }
+        else if (choice == 3) {
+            string newBreed;
+            cout << "Enter new breed: ";
+            cin >> newBreed;
+            details[4] = newBreed;
+            cout << "Breed updated.\n";
+            break;
+        }
+        else if (choice == 0) {
+            cout << "Returning to previous menu...\n";
+            return;
+        }
+        else {
+            cout << "Invalid option, please try again.\n";
+        }
+    }
+
+    // Rebuild the updated line
+    string updatedLine = details[0] + "," + details[1] + "," + details[2] + "," + details[3] + "," + details[4];
+
+    // Replace old pet line
+    allLines.push_back(updatedLine);
+
+    ofstream outputFile(fileName);
+    for (const auto& l : allLines) {
+        outputFile << l << "\n";
+    }
+    outputFile.close();
+
+    cout << "Pet profile updated successfully.\n";
+}
+
 
 //-------------------------------------------------
 // Delete section
@@ -326,4 +428,42 @@ void Delete::deleteProfile(std::string uname){
     cout << "Deleting profile: " << uname;
 }
 
+void Delete::deletePet(const std::string& petName, const std::string& fileName) {
+    std::ifstream inputFile(fileName);
+    std::vector<std::string> allLines;
+    std::string line;
+
+    if (!inputFile.is_open()) {
+        std::cerr << "Error opening file: " << fileName << std::endl;
+        return;
+    }
+
+    // Read all lines and filter out the pet to delete
+    while (getline(inputFile, line)) {
+        std::stringstream ss(line);
+        std::string token;
+        getline(ss, token, ','); // token holds the pet name
+
+        if (token != petName) {
+            allLines.push_back(line);
+        } else {
+            std::cout << "Pet '" << petName << "' found and deleted." << std::endl;
+        }
+    }
+
+    inputFile.close();
+
+    // Write filtered lines back to the file
+    std::ofstream outputFile(fileName);
+    if (!outputFile.is_open()) {
+        std::cerr << "Error writing to file: " << fileName << std::endl;
+        return;
+    }
+
+    for (const std::string& l : allLines) {
+        outputFile << l << '\n';
+    }
+
+    outputFile.close();
+}
     

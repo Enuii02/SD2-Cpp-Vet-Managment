@@ -32,13 +32,16 @@ class Update{
 
     void updateUser(std::string uname, std::string filename);
 
-    //TODO updatePet
+    void updatePet(std::string petName, std::string filename); //WILL PROPERLY CHECK ON THURSDAY - owen
+    
 };
 
 class Delete{
     public:
 
     void deleteProfile(std::string uname);
-    //TODO deletePet
+
+    void deletePet(const std::string& petName, const std::string& fileName);
+    
     //TODO deleteAppointment
 };
