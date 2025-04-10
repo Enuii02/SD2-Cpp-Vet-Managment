@@ -510,6 +510,102 @@ void Update::updatePet(std::string petName, std::string fileName) {
     std::cout << "Pet profile updated successfully.\n";
 }
 
+// Function to update an appointment in appointments.txt
+void Update::updateAppointment(int appointmentID, const std::string& fileName) {
+    std::vector<std::string> details;
+    std::string line, token;
+    std::ifstream MyReadFile(fileName);
+
+    bool found = false;
+
+    // Read all lines and find the appointment by ID
+    while (getline(MyReadFile, line)) {
+        details.clear();
+        std::stringstream ss(line);
+
+        while (getline(ss, token, ',')) {
+            details.push_back(token);
+        }
+
+        if (!details.empty() && std::stoi(details[0]) == appointmentID) {
+            found = true;
+            break;
+        }
+    }
+
+    MyReadFile.close();
+
+    if (!found) {
+        std::cout << "Appointment with ID " << appointmentID << " not found.\n";
+        return;
+    }
+
+    // Ask the user what they want to update
+    while (true) {
+        int choice;
+        std::cout << "\n--- What would you like to update for Appointment ID " << appointmentID << "? ---\n";
+        std::cout << "1. Appointment Date [1]\n";
+        std::cout << "2. Appointment Description [2]\n";
+        std::cout << "0. Back [0]\n";
+        std::cout << "Enter your choice: ";
+        std::cin >> choice;
+
+        if (choice == 1) {
+            std::string newDate;
+            std::cout << "Enter new appointment date: ";
+            std::cin >> newDate;
+            details[3] = newDate;
+            std::cout << "Appointment date updated to " << newDate << "\n";
+            break;
+        } else if (choice == 2) {
+            std::cin.ignore(); // clear newline from input buffer
+            std::string newDescription;
+            std::cout << "Enter new appointment description: ";
+            std::getline(std::cin, newDescription);
+            details[4] = newDescription;
+            std::cout << "Appointment description updated.\n";
+            break;
+        } else if (choice == 0) {
+            std::cout << "Returning to menu...\n";
+            return;
+        } else {
+            std::cout << "Invalid option. Try again.\n";
+        }
+    }
+
+    // Rebuild the file with updated appointment
+    std::vector<std::string> allLines;
+    std::ifstream inputFile(fileName);
+
+    while (getline(inputFile, line)) {
+        allLines.push_back(line);
+    }
+
+    inputFile.close();
+
+    // Rebuild the line to write
+    std::string updatedLine = details[0] + "," + details[1] + "," + details[2] + "," +
+                              details[3] + "," + details[4];
+
+    for (auto& l : allLines) {
+        std::stringstream ss(l);
+        std::string id;
+        getline(ss, id, ',');
+        if (std::stoi(id) == appointmentID) {
+            l = updatedLine;
+            break;
+        }
+    }
+
+    std::ofstream outputFile(fileName);
+    for (const auto& l : allLines) {
+        outputFile << l << "\n";
+    }
+    outputFile.close();
+
+    std::cout << "Appointment updated successfully.\n";
+}
+
 //-------------------------------------------------
 // Delete section
 //-------------------------------------------------

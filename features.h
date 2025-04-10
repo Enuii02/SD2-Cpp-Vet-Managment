@@ -27,7 +27,8 @@ class Update {
     public:
         void updateUser(std::string uname, std::string filename);
         void updatePet(std::string petName, std::string filename);
-        // TODO: updateAppointment
+        void updateAppointment(int appointmentID, const std::string& fileName);
+
 };
 
 class Delete {
