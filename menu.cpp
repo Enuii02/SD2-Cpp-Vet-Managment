@@ -744,3 +744,5 @@ void viewAppointmentRecordsFullAcess() {
             std::cout << "Invalid choice. Please try again.\n";
     }
 }
+
+std:cout << "Test test";
