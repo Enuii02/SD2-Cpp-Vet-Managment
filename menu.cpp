@@ -354,7 +354,7 @@ void viewOwnerRecords() {
     std::cin >> username;
 
     View view;
-    view.viewIndividual(username, "data/owner.txt");  // adjust path if different
+    view.viewIndividual(username, "Data/owner.txt");  // adjust path if different
 }
 
 void addOwner() {
@@ -383,7 +383,7 @@ void updateOwner() {
     std::cin >> username;
 
     Update update;
-    update.updateUser(username, "data/users.txt");  // adjust path if needed
+    update.updateUser(username, "Data/users.txt");  // adjust path if needed
 }
 
 void removeOwner() {
