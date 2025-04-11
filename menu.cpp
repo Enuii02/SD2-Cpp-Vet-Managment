@@ -441,29 +441,17 @@ void adminOwnerManagement() {
         std::cout << "0. Back to Admin Menu\n";
         std::cout << "Select an option: ";
         std::cin >> choice;
-
+        clearInput();
         switch (choice) {
-            case 1:
-                viewOwnerRecords();
-                break;
-            case 2:
-                addOwner();
-                break;
-            case 3:
-                updateOwner();
-                break;
-            case 4:
-                removeOwner();
-                break;
-            case 0:
-                std::cout << "Returning to admin menu...\n";
-                break;
-            default:
-                std::cout << "Invalid option. Please try again.\n";
+            case 1: viewOwnerRecords(); break;
+            case 2: addOwner(); break;
+            case 3: updateOwner(); break;
+            case 4: removeOwner(); break;
+            case 0: adminOwnerManagement(); break;
+            default: std::cout << "Invalid choice, try again." << std::endl;
         }
+    } while (choice != 0);}
 
-    } while (choice != 0);
-}
 
 void staffMenu() {
     int choice;
@@ -744,3 +732,81 @@ void viewAppointmentRecordsFullAcess() {
             std::cout << "Invalid choice. Please try again.\n";
     }
 }
+
+//-------------------------------------------------------
+// Pets
+//-------------------------------------------------------
+
+void viewPetRecord(){
+    int choice;
+    std::string pathToFile = "Data/pets.txt";
+    std::cout << "\n--- View Pets Records ---\n";
+    std::cout << "1. View All Pets Records\n";
+    std::cout << "2. View a Specific Pet Record\n";
+    std::cout << "0. Back\n";
+    std::cout << "Enter your choice: ";
+    std::cin >> choice;
+
+    if (std::cin.fail()) {
+        std::cout << "Invalid input. Please enter a valid choice." << std::endl;
+        clearInput();  // Clear invalid input
+        return;
+    }
+
+    // Handle the user choice
+    switch (choice) {
+        case 1: {
+            view.viewAllPets(pathToFile);
+            break;
+        }
+        case 2: {
+            // Display a specific record
+            std::string identifier;
+            std::cout << "Enter Pet Name: ";
+            std::cin >> identifier;
+            
+            view.viewIndividual(identifier, pathToFile);
+            break;
+        }
+        case 0:
+            std::cout << "Returning to previous menu...\n";
+            break;
+        default:
+            std::cout << "Invalid choice. Please try again.\n";
+    }
+}
+
+void addPetRecord(){
+    std::string name;
+    std::string ownerUsername;
+    std::string appointmentsHistory = "None"; 
+    std::string DOB;
+    std::string breed;
+
+    std::cout << "\n--- Add Pet Record ---\n";
+
+    // Get Appointment ID
+    std::cout << "Enter Pet Name: ";
+    while (!(std::cin >> name)) {
+        std::cout << "Invalid input. Please eneter a valid pet name: ";
+        clearInput();
+    }
+
+    if(checkForDuplicates(name, "Data/appointments")) {
+        return;
+    }
+    clearInput();
+
+    std::cout << "Enter Owner Username: ";
+    std::getline(std::cin, ownerUsername);
+
+    std::cout << "Enter DOB: ";
+    std::getline(std::cin, DOB);
+
+    std::cout << "Enter Breed: ";
+    std::getline(std::cin, breed);
+
+    Pet pet(name, ownerUsername, appointmentsHistory, DOB, breed);
+};
+
+
