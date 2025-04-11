@@ -1,13 +1,9 @@
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <string>
+#include <sstream>
 #include <vector>
-#include <limits>
-#include <algorithm>
 #include "features.h"
-#include "profiles.h"
-#include "menu.h"
 
 //-------------------------------------------------
 // View section
@@ -267,16 +263,8 @@ void Update::updateUser(std::string uname, std::string fileName) {
         details[4] = newEmail;
     } else if (choice == 4) {
         std::string newPhone;
-        bool validPhone = false;
-        while (!validPhone) {
-            std::cout << "Enter new phone number (digits only): ";
-            std::cin >> newPhone;
-            if (std::all_of(newPhone.begin(), newPhone.end(), ::isdigit)) {
-                validPhone = true;
-            } else {
-                std::cout << "Invalid input. Phone number must contain only digits." << std::endl;
-            }
-        }
+        std::cout << "Enter new phone number: ";
+        std::cin >> newPhone;
         details[5] = newPhone;
     } else if (choice == 0) {
         std::cout << "Update cancelled." << std::endl;

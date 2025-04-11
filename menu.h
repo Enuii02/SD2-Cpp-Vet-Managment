@@ -32,9 +32,3 @@ void modifyAppointment();
 void cancelAppointment();
 void viewAppointmentRecordsFullAcess();
 #endif
-
-void viewOwnerRecords();
-void addOwner();
-void updateOwner();
-void removeOwner();
-void adminOwnerManagement();
