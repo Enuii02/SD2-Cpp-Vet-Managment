@@ -358,7 +358,7 @@ void viewOwnerRecords() {
 }
 
 void addOwner() {
-    std::string uname, role = "owner", pwd, fname, mail, phone;
+    std::string uname, role = "guest", pwd, fname, mail, phone;
 
     std::cout << "Enter new owner's username: ";
     std::cin >> uname;
@@ -373,7 +373,7 @@ void addOwner() {
     std::cin >> phone;
 
     Save save;
-    save.saveUser(uname, role, pwd, fname, mail, phone);
+    save.saveUser(uname, owner, pwd, fname, mail, phone);
     std::cout << "Owner profile added successfully.\n";
 }
 
