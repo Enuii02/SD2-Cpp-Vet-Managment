@@ -568,8 +568,8 @@ void veterinaryOwnerManagementMenu() {
         }
         clearInput();
         switch (choice) {
-            case 1: std::cout << "Redirecting to View Owner Records..." << std::endl; break;
-            case 2: std::cout << "Redirecting to Update Owner Details..." << std::endl; break;
+            case 1: viewOwnerRecords(); break;
+            case 2: updateOwner(); break;
             case 0: std::cout << "Returning to Veterinary Menu..." << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
