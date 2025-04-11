@@ -252,7 +252,6 @@ void adminMenu() {
         std::cout << "1. Appointment Management" << std::endl;
         std::cout << "2. Owner Management" << std::endl;
         std::cout << "3. Pet Management" << std::endl;
-        std::cout << "4. System Management" << std::endl;
         std::cout << "0. Logout" << std::endl;
         std::cout << "Enter your choice: ";
         std::cin >> choice;
@@ -266,7 +265,6 @@ void adminMenu() {
             case 1: adminAppointmentManagementMenu(); break;
             case 2: adminOwnerManagementMenu(); break;
             case 3: adminPetManagementMenu(); break;
-            case 4: adminSystemManagementMenu(); break;
             case 0: std::cout << "Logging out of Admin account..." << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
@@ -319,11 +317,11 @@ void adminOwnerManagementMenu() {
         }
         clearInput();
         switch (choice) {
-            case 1: std::cout << "Redirecting to View Owner Records..." << std::endl; break;
-            case 2: std::cout << "Redirecting to Add Owner..." << std::endl; break;
-            case 3: std::cout << "Redirecting to Update Owner Details..." << std::endl; break;
-            case 4: std::cout << "Redirecting to Remove Owner..." << std::endl; break;
-            case 0: std::cout << "Returning to Admin Menu..." << std::endl; break;
+            case 1: viewOwnerRecords(); break;
+            case 2: addOwner(); break;
+            case 3: updateOwner(); break;
+            case 4: removeOwner(); break;
+            case 0: std::cout << "Logging out of Admin account..." << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
     } while (choice != 0);
@@ -347,34 +345,10 @@ void adminPetManagementMenu() {
         }
         clearInput();
         switch (choice) {
-            case 1: std::cout << "Redirecting to View Pet Records..." << std::endl; break;
-            case 2: std::cout << "Redirecting to Add Pet..." << std::endl; break;
-            case 3: std::cout << "Redirecting to Update Pet Details..." << std::endl; break;
+            case 1: viewPetRecord(); break;
+            case 2: addPetRecord(); break;
+            case 3: updatePetRecord(); break;
             case 4: std::cout << "Redirecting to Remove Pet..." << std::endl; break;
-            case 0: std::cout << "Returning to Admin Menu..." << std::endl; break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
-        }
-    } while (choice != 0);
-}
-
-void adminSystemManagementMenu() {
-    int choice;
-    do {
-        std::cout << "\n--- Admin System Management ---" << std::endl;
-        std::cout << "1. Save Data" << std::endl;
-        std::cout << "2. Load Data" << std::endl;
-        std::cout << "0. Back" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
-            clearInput();
-            continue;
-        }
-        clearInput();
-        switch (choice) {
-            case 1: std::cout << "Redirecting to Save Data..." << std::endl; break;
-            case 2: std::cout << "Redirecting to Load Data..." << std::endl; break;
             case 0: std::cout << "Returning to Admin Menu..." << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
@@ -428,30 +402,6 @@ void removeOwner() {
     del.deleteEntry(username, "Data/owner.txt", "Owner");
     std::cout << "Owner profile deleted successfully.\n";
 }
-
-void adminOwnerManagement() {
-    int choice;
-
-    do {
-        std::cout << "\n--- Admin: Owner Management ---\n";
-        std::cout << "1. View Owner Records\n";
-        std::cout << "2. Add New Owner\n";
-        std::cout << "3. Update Existing Owner\n";
-        std::cout << "4. Remove Owner\n";
-        std::cout << "0. Back to Admin Menu\n";
-        std::cout << "Select an option: ";
-        std::cin >> choice;
-        clearInput();
-        switch (choice) {
-            case 1: viewOwnerRecords(); break;
-            case 2: addOwner(); break;
-            case 3: updateOwner(); break;
-            case 4: removeOwner(); break;
-            case 0: adminOwnerManagement(); break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
-        }
-    } while (choice != 0);}
-
 
 void staffMenu() {
     int choice;
@@ -809,4 +759,23 @@ void addPetRecord(){
     Pet pet(name, ownerUsername, appointmentsHistory, DOB, breed);
 };
 
+void updatePetRecord(){
 
+    std::string petName;
+    std::string filePath = "Data/pets.txt";
+
+    std::cout << "\n--- Update Pet Record ---\n";
+    std::cout << "Please enter the Pet's name you want to modify: ";
+
+    // Input validation for the Appointment ID
+    while (!(std::cin >> petName)) {
+        std::cout << "Invalid input. ";
+        std::cin.clear();  // Clear the error flag
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // Ignore invalid input
+    }
+
+    update.updatePet(petName, filePath);
+
+    std::cout << "Appointment with name: " << petName << " has been successfully modified!" << std::endl;
+
+}

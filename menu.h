@@ -31,4 +31,14 @@ void scheduleAppointment();
 void modifyAppointment();
 void cancelAppointment();
 void viewAppointmentRecordsFullAcess();
+
+void addPetRecord();
+void updatePetRecord();
+void viewPetRecord();
+
+void viewOwnerRecords();
+void addOwner();
+void updateOwner();
+void removeOwner();
+
 #endif
