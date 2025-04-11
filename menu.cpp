@@ -367,33 +367,12 @@ void adminOwnerManagementMenu() {
         }
         clearInput();
         switch (choice) {
-            case 1: {
-                string username;
-                cout << "Enter the username of the owner to view: ";
-                cin >> username;
-                clearInput();
-                View view;
-                view.viewIndividual(username, "Data/owner.txt");
-                break;
-            }
-            case 2:
-                addOwner();  // Now addOwner is declared
-                break;
-            case 3:
-                cout << "Redirecting to Update Owner Details..." << endl;
-                break;
-            case 4: {
-                string username;
-                cout << "Enter the username of the owner to delete: ";
-                cin >> username;
-                clearInput();
-                Delete del;
-                del.deleteEntry(username, "Data/owner.txt", "Owner");
-                cout << "Owner profile deleted successfully." << endl;
-                break;
-            }
-            case 0: cout << "Returning to Admin Menu..." << endl; break;
-            default: cout << "Invalid option. Please try again." << endl;
+            case 1: viewOwnerRecords(); break;
+            case 2: addOwner(); break;
+            case 3: updateOwner(); break;
+            case 4: removeOwner(); break;
+            case 0: adminOwnerManagement(); break;
+            default: std::cout << "Invalid choice, try again." << std::endl;
         }
     } while (choice != 0);
 }
