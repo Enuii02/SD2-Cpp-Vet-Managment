@@ -46,7 +46,7 @@ void createNewAccount() {
         return;
     }
 
-    std::cout << "Enter Phone Number (optional, format: +1234567890): ";
+    std::cout << "Enter Phone Number (optional, format: +44714567890): ";
     std::getline(std::cin, phone);
     if (!phone.empty() && !std::regex_match(phone, phoneRegex)) {
         std::cerr << "Invalid phone number format.\n";
@@ -245,7 +245,7 @@ void loginMenu() {
         switch (choice) {
             case 1: if (loginUser("admin")) adminMenu(); break;
             case 2: if (loginUser("staff")) staffMenu(); break;
-            case 3: if (loginUser("veterinary")) veterinaryMenu(); break;
+            case 3: if (loginUser("vet")) veterinaryMenu(); break;
             case 4: if (loginUser("guest")) guestMenu(); break;
             case 0: std::cout << "Returning to Main Menu..." << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
