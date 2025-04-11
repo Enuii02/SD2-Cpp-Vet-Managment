@@ -319,11 +319,11 @@ void adminOwnerManagementMenu() {
         }
         clearInput();
         switch (choice) {
-            case 1: std::cout << "Redirecting to View Owner Records..." << std::endl; break;
-            case 2: std::cout << "Redirecting to Add Owner..." << std::endl; break;
-            case 3: std::cout << "Redirecting to Update Owner Details..." << std::endl; break;
-            case 4: std::cout << "Redirecting to Remove Owner..." << std::endl; break;
-            case 0: std::cout << "Returning to Admin Menu..." << std::endl; break;
+            case 1: viewOwnerRecords(); break;
+            case 2: addOwner(); break;
+            case 3: updateOwner(); break;
+            case 4: removeOwner(); break;
+            case 0: adminOwnerManagement(); break;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
     } while (choice != 0);
