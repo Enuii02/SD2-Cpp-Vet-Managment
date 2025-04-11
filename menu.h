@@ -35,6 +35,7 @@ void viewAppointmentRecordsFullAcess();
 void addPetRecord();
 void updatePetRecord();
 void viewPetRecord();
+void removePetRecord();
 
 void viewOwnerRecords();
 void addOwner();

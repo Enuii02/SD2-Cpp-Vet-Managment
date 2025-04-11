@@ -348,13 +348,14 @@ void adminPetManagementMenu() {
             case 1: viewPetRecord(); break;
             case 2: addPetRecord(); break;
             case 3: updatePetRecord(); break;
-            case 4: std::cout << "Redirecting to Remove Pet..." << std::endl; break;
+            case 4: removePetRecord(); break;
             case 0: std::cout << "Returning to Admin Menu..." << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
     } while (choice != 0);
 }
 
+// Owner stuff----------------------------------------------------------------------------
 void viewOwnerRecords() {
     std::string username;
     std::cout << "Enter the username of the owner to view: ";
@@ -424,6 +425,7 @@ void staffMenu() {
         }
     } while (choice != 0);
 }
+// --------------------------------------------------------------------------------
 
 void staffAppointmentManagementMenu() {
     int choice;
@@ -444,9 +446,9 @@ void staffAppointmentManagementMenu() {
         clearInput();
         switch (choice) {
             case 1: scheduleAppointment(); break;
-            case 2: std::cout << "Redirecting to Modify Appointment..." << std::endl; break;
-            case 3: std::cout << "Redirecting to Cancel Appointment..." << std::endl; break;
-            case 4: std::cout << "Redirecting to View Appointment Records..." << std::endl; break;
+            case 2: modifyAppointment(); break;
+            case 3: cancelAppointment(); break;
+            case 4: viewAppointmentRecordsFullAcess; break;
             case 0: std::cout << "Returning to Staff Menu..." << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
@@ -778,4 +780,22 @@ void updatePetRecord(){
 
     std::cout << "Appointment with name: " << petName << " has been successfully modified!" << std::endl;
 
+}
+
+void removePetRecord(){
+    std::cout << "\n--- Delete Pet Record ---\n";
+
+    std::string identifier;
+    std::string fileName = "Data/pets.txt";
+    std::string entryType = "Pet";
+
+    std::cout << "Please enter pet name you would like to delete:";
+    std::cin >> identifier;
+
+    if (identifier.empty()) {
+        std::cout << "Invalid input. Please enter a valid pet name." << std::endl;
+        return;
+    }
+
+    deleteInstance.deleteEntry(identifier, fileName, entryType);
 }
