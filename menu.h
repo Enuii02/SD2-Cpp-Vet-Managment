@@ -42,4 +42,8 @@ void addOwner();
 void updateOwner();
 void removeOwner();
 
+void viewOwnerRecordsLimitedAccess();
+void viewPetRecordsLimitedAccess();
+void viewAppointmentLimitedAcess();
+
 #endif

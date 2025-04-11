@@ -13,6 +13,7 @@ Delete deleteInstance;
 View view;
 Save save;
 
+std::string loggedInUser;
 //-------------------------------------------------
 // Account Management Functions
 //-------------------------------------------------
@@ -137,6 +138,7 @@ bool loginUser(const std::string& expectedRole) {
 
     if (checkCredentials(username, password, filename, expectedRole)) {
         std::cout << "Login successful as " << expectedRole << "!" << std::endl;
+        loggedInUser = username;
         return true;
     }
     else {
@@ -491,9 +493,9 @@ void veterinaryAppointmentManagementMenu() {
         clearInput();
         switch (choice) {
             case 1: scheduleAppointment(); break;
-            case 2: std::cout << "Redirecting to Modify Appointment..." << std::endl; break;
-            case 3: std::cout << "Redirecting to Cancel Appointment..." << std::endl; break;
-            case 4: std::cout << "Redirecting to View Appointment Records..." << std::endl; break;
+            case 2: modifyAppointment(); break;
+            case 3: cancelAppointment(); break;
+            case 4: viewAppointmentRecordsFullAcess(); break;
             case 0: std::cout << "Returning to Veterinary Menu..." << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
@@ -791,4 +793,27 @@ void removePetRecord(){
     }
 
     deleteInstance.deleteEntry(identifier, fileName, entryType);
+}
+
+// limited acess funcitons for the Guest
+
+void viewOwnerRecordsLimitedAccess(){
+    view.viewIndividual(loggedInUser, "Data/owner.txt");  // adjust path if different
+}
+
+void viewPetRecordsLimitedAccess(){
+    std::string petName;
+    std::cout << "Enter the your pet's name: ";
+    std::cin >> petName;
+
+    View view;
+    view.viewIndividual(petName, "Data/pets.txt"); 
+}
+
+void viewAppointmentLimitedAcess(){
+    int identifier;
+    std::cout << "Enter Appointment ID: ";
+    std::cin >> identifier;
+    
+    view.viewIndividualAppointment(identifier, "Data/appointments.txt");
 }
