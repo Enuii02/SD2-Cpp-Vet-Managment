@@ -7,6 +7,8 @@
 #include "features.h"
 #include "profiles.h"
 #include "menu.h"
+#include <regex>
+#include <limits>
 
 Update update;
 Delete deleteInstance;
@@ -18,60 +20,106 @@ std::string loggedInUser;
 // Account Management Functions
 //-------------------------------------------------
 
+
+
 void createNewAccount() {
     std::string fullName, email, phone, username, password, confirmPassword;
     int accountTypeChoice;
+
+    std::regex emailRegex(R"((\w+)(\.?[\w-]+)*@(\w+)(\.[a-zA-Z]{2,}))");
+    std::regex phoneRegex(R"(^\+?\d{7,15}$)");
+    std::regex usernameRegex(R"(\w{4,})");
+
     std::cout << "\n--- Create New Account ---" << std::endl;
+
     std::cout << "Enter Full Name: ";
     std::getline(std::cin, fullName);
+    if (fullName.empty()) {
+        std::cerr << "Full name cannot be empty.\n";
+        return;
+    }
+
     std::cout << "Enter Email Address: ";
     std::getline(std::cin, email);
-    std::cout << "Enter Phone Number (optional): ";
+    if (!std::regex_match(email, emailRegex)) {
+        std::cerr << "Invalid email format.\n";
+        return;
+    }
+
+    std::cout << "Enter Phone Number (optional, format: +1234567890): ";
     std::getline(std::cin, phone);
-    std::cout << "Choose Username: ";
+    if (!phone.empty() && !std::regex_match(phone, phoneRegex)) {
+        std::cerr << "Invalid phone number format.\n";
+        return;
+    }
+
+    std::cout << "Choose Username (min 4 characters): ";
     std::getline(std::cin, username);
+    if (!std::regex_match(username, usernameRegex)) {
+        std::cerr << "Invalid username. Must be at least 4 alphanumeric characters.\n";
+        return;
+    }
+
     std::cout << "Choose Password: ";
     std::getline(std::cin, password);
+
     std::cout << "Confirm Password: ";
     std::getline(std::cin, confirmPassword);
     if (password != confirmPassword) {
-        std::cout << "Passwords do not match. Account creation failed." << std::endl;
+        std::cerr << "Passwords do not match. Account creation failed.\n";
         return;
     }
+
     std::cout << "\nChoose Account Type:\n1. Guest\n2. Staff (Admin/Staff/Veterinary)" << std::endl;
     std::cout << "Enter your choice: ";
-    std::cin >> accountTypeChoice;
+    if (!(std::cin >> accountTypeChoice)) {
+        std::cerr << "Invalid input. Expected an integer.\n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return;
+    }
     std::cin.ignore();
+
     if (accountTypeChoice == 1) {
-        save.saveUser(username, "guest", password, fullName, email, phone);
+        if (!checkForDuplicates(username, "Data/owner.txt")) {
+            save.saveUser(username, "guest", password, fullName, email, phone);
             std::cout << "Guest account created successfully!" << std::endl;
-        } 
-    
-    else if (accountTypeChoice == 2) {
+        } else {
+            std::cout << "Account already exists. Please login." << std::endl;
+        }
+    } else if (accountTypeChoice == 2) {
         int roleChoice;
         std::string role;
         std::cout << "Select Role:\n1. Admin\n2. Staff\n3. Veterinary" << std::endl;
         std::cout << "Enter your choice: ";
-        std::cin >> roleChoice;
+        if (!(std::cin >> roleChoice)) {
+            std::cerr << "Invalid input. Expected an integer.\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            return;
+        }
         std::cin.ignore();
+
         switch (roleChoice) {
             case 1: role = "admin"; break;
             case 2: role = "staff"; break;
             case 3: role = "vet"; break;
             default:
-                std::cout << "Invalid role choice. Account creation failed." << std::endl;
+                std::cerr << "Invalid role choice. Account creation failed.\n";
                 return;
         }
+
         if (!checkForDuplicates(username, "Data/staffacc.txt")) {
             save.saveUser(username, role, password, fullName, email, phone);
+            std::cout << role << " account created successfully!" << std::endl;
         } else {
             std::cout << "Account already exists. Please login." << std::endl;
         }
-    }
-    else {
-        std::cout << "Invalid account type choice. Account creation failed." << std::endl;
+    } else {
+        std::cerr << "Invalid account type choice. Account creation failed.\n";
     }
 }
+
 
 void alreadyHaveAccount() {
     std::cout << "\nRedirecting to Login Menu..." << std::endl;

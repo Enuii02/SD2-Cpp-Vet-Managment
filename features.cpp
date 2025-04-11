@@ -49,15 +49,28 @@ void View::viewIndividual(std::string name, std::string fileName) {
 }
 
 void View::viewAllUsers(std::string fileName) {
-    std::ifstream inFile(fileName);
-    std::string output;
-    std::cout << "== Displaying: " << fileName << " ==" << std::endl;
-    std::cout << "Format: username, role, password, full name, email, phone number" << std::endl << std::endl;
-    while (std::getline(inFile, output)) {
-        std::cout << output << std::endl;
+    try {
+        std::ifstream inFile(fileName);
+        if (!inFile.is_open()) {
+            throw std::ios_base::failure("Failed to open file: " + fileName);
+        }
+
+        std::string output;
+        std::cout << "== Displaying: " << fileName << " ==" << std::endl;
+        std::cout << "Format: username, role, password, full name, email, phone number" << std::endl << std::endl;
+
+        while (std::getline(inFile, output)) {
+            std::cout << output << std::endl;
+        }
+
+        inFile.close();
+    } catch (const std::ios_base::failure& e) {
+        std::cerr << "File error: " << e.what() << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Unexpected error: " << e.what() << std::endl;
     }
-    inFile.close();
 }
+
 
 void View::viewAllPets(std::string fileName) {
     std::ifstream inFile(fileName);

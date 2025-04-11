@@ -1,1 +1,0 @@
-Fluffy,john_doe,Checkup on 2025-04-01,2020-05-01,Labrador
