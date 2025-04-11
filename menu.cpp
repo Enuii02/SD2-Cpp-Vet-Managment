@@ -596,7 +596,7 @@ void guestMenu() {
         switch (choice) {
             case 1: std::cout << "Redirecting to View Pet Records..." << std::endl; break;
             case 2: std::cout << "Redirecting to View Owner Records..." << std::endl; break;
-            case 3: std::cout << "Redirecting to View Appointment Records..." << std::endl; break;
+            case 3: viewAppointmentLimitedAcess(); break;
             case 0: std::cout << "Logging out of Guest account..." << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
