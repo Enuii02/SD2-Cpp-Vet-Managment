@@ -11,6 +11,7 @@
 Update update;
 Delete deleteInstance;
 View view;
+Save save;
 
 //-------------------------------------------------
 // Account Management Functions
@@ -41,16 +42,10 @@ void createNewAccount() {
     std::cin >> accountTypeChoice;
     std::cin.ignore();
     if (accountTypeChoice == 1) {
-        std::string extraInfo = fullName + "," + email + "," + phone;
-        if (!checkForDuplicates(username, "Data/owner.txt")) {
-            std::ofstream outfile("Data/owner.txt", std::ios::app);
-            outfile << username << "," << password << "," << extraInfo << "\n";
-            outfile.close();
+        save.saveUser(username, "guest", password, fullName, email, phone);
             std::cout << "Guest account created successfully!" << std::endl;
-        } else {
-            std::cout << "Account already exists. Please login." << std::endl;
-        }
-    }
+        } 
+    
     else if (accountTypeChoice == 2) {
         int roleChoice;
         std::string role;
@@ -59,18 +54,15 @@ void createNewAccount() {
         std::cin >> roleChoice;
         std::cin.ignore();
         switch (roleChoice) {
-            case 1: role = "Admin"; break;
-            case 2: role = "Staff"; break;
-            case 3: role = "Veterinary"; break;
+            case 1: role = "admin"; break;
+            case 2: role = "staff"; break;
+            case 3: role = "vet"; break;
             default:
                 std::cout << "Invalid role choice. Account creation failed." << std::endl;
                 return;
         }
         if (!checkForDuplicates(username, "Data/staffacc.txt")) {
-            std::ofstream outfile("Data/staffacc.txt", std::ios::app);
-            outfile << username << "," << password << "," << role << "\n";
-            outfile.close();
-            std::cout << role << " account created successfully!" << std::endl;
+            save.saveUser(username, role, password, fullName, email, phone);
         } else {
             std::cout << "Account already exists. Please login." << std::endl;
         }
@@ -409,6 +401,8 @@ void staffMenu() {
     do {
         std::cout << "\n=== Staff Menu ===" << std::endl;
         std::cout << "1. Appointment Management" << std::endl;
+        std::cout << "2. View Pet Records" << std::endl;
+        std::cout << "3. View Owner Records" << std::endl;
         std::cout << "0. Logout" << std::endl;
         std::cout << "Enter your choice: ";
         std::cin >> choice;
@@ -420,6 +414,8 @@ void staffMenu() {
         clearInput();
         switch (choice) {
             case 1: staffAppointmentManagementMenu(); break;
+            case 2: viewPetRecord(); break;
+            case 3: viewOwnerRecords(); break;
             case 0: std::cout << "Logging out of Staff account..." << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
