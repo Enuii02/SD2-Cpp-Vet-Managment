@@ -1,1 +1,3 @@
 mati,vet,123,Mateusz Skrzydlo,mati200212@gmail.com,
+mattAdmin,admin,123,Matt Skrz,matt@example.com,
+john_doe,staff,123,John Doe,test@example.coom,

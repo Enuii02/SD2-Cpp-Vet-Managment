@@ -401,7 +401,8 @@ void viewOwnerRecords() {
     std::cin >> username;
 
     View view;
-    view.viewIndividual(username, "data/owner.txt");  // adjust path if different
+    std::cout << "Test";
+    view.viewIndividual(username, "Data/owner.txt");  // adjust path if different
 }
 
 void addOwner() {
@@ -612,7 +613,6 @@ void scheduleAppointment() {
     int appointmentID;
     std::string petName;
     std::string ownerUsername;
-    std::string appointmentDate;
     std::string appointmentDescription;
 
     std::cout << "\n--- Schedule Appointment ---\n";
@@ -621,6 +621,7 @@ void scheduleAppointment() {
     std::cout << "Enter Appointment ID (integer): ";
     while (!(std::cin >> appointmentID)) {
         std::cout << "Invalid input. Please enter a valid integer for Appointment ID: ";
+        return
         clearInput();
     }
 
@@ -639,8 +640,18 @@ void scheduleAppointment() {
     std::getline(std::cin, ownerUsername);
 
     // Get Appointment Date
+    std::string appointmentDate;
+    std::regex dateRegex(R"(^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$)");
+
     std::cout << "Enter Appointment Date (e.g., 2025-04-12): ";
     std::getline(std::cin, appointmentDate);
+
+    if (std::regex_match(appointmentDate, dateRegex)) {
+        std::cout << "Valid date format.\n";
+    } else {
+        std::cout << "Invalid date format. Please use YYYY-MM-DD.\n";
+        return;
+    }
 
     // Get Appointment Description
     std::cout << "Enter Appointment Description: ";
@@ -668,7 +679,7 @@ void modifyAppointment() {
     // Proceed to update the appointment using the given ID
     update.updateAppointment(appointmentID, filePath);
 
-    std::cout << "Appointment with ID " << appointmentID << " has been successfully modified!" << std::endl;
+    std::cout << "Exiting to menu..." << std::endl;
 }
 
 void cancelAppointment(){
