@@ -118,9 +118,6 @@ bool checkCredentials(const std::string& username, const std::string& password, 
         std::getline(ss, fileRole, ',');
         std::getline(ss, filePassword, ',');
 
-        // std::cout << fileUsername << " " << filePassword << fileRole << std::endl; // test, delete later
-        // std::cout << username << " " << password << expectedRole << std::endl; // test, delete later
-
         if (fileUsername == username && filePassword == password) {
             if (expectedRole == "Guest" || fileRole == expectedRole)
                 return true;
@@ -233,9 +230,9 @@ void signUpMenu() {
     } while (choice != 0);
 }
 
-//-------------------------------------------------
-// The following menus simply redirect to functions in features (or profiles)
-//-------------------------------------------------
+//---------------------------------------------------------------------------
+// User menus
+//---------------------------------------------------------------------------
 
 void adminMenu() {
     int choice;
@@ -358,7 +355,7 @@ void viewOwnerRecords() {
 }
 
 void addOwner() {
-    std::string uname, role = "owner", pwd, fname, mail, phone;
+    std::string uname, role = "guest", pwd, fname, mail, phone;
 
     std::cout << "Enter new owner's username: ";
     std::cin >> uname;

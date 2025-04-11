@@ -2,3 +2,4 @@ jane_smith,staff,password123,Jane Smith,jane.smith@email.com,555-5678
 john_doe,admin,password123,John Doe,john.doe@example.com,123-456-7890
 
 mat,admin,123,mat,mat,
+a,guest,a,a,a,a

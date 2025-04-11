@@ -158,7 +158,7 @@ bool checkForDuplicates(const std::string& identifier, const std::string& pathTo
 void Save::saveUser(std::string uname, std::string r, std::string pwd, 
                      std::string fname, std::string mail, std::string phone) {
     std::string pathToFile;
-    if (r == "admin" || r == "vet" || r == "staff" || r == "guest") {
+    if (r == "admin" || r == "vet" || r == "staff") {
         pathToFile = "Data/staffacc.txt";
     } else if (r == "guest") {
         pathToFile = "Data/owner.txt";
