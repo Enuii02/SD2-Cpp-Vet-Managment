@@ -2,203 +2,231 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <limits>
 #include <vector>
+#include <limits>
+#include <algorithm>
 #include "features.h"
 #include "profiles.h"
 #include "menu.h"
 
-Update update;
-Delete deleteInstance;
-View view;
+using namespace std;
 
 //-------------------------------------------------
+// Forward Declarations
+//-------------------------------------------------
+void clearInput();
+bool isValidPhoneNumber(const string &phone);
+void ensureFileExists(const string& filename);
+
+void createNewAccount();
+void alreadyHaveAccount();
+
+bool checkCredentials(const string& username, const string& password, const string& filename, const string& expectedRole);
+bool loginUser(const string& expectedRole);
+void loginMenu();
+void signUpMenu();
+void mainMenu();
+
+void adminMenu();
+void adminAppointmentManagementMenu();
+void adminOwnerManagementMenu();
+void adminPetManagementMenu();
+void adminSystemManagementMenu();
+
+void staffMenu();
+void staffAppointmentManagementMenu();
+
+void veterinaryMenu();
+void veterinaryAppointmentManagementMenu();
+void veterinaryOwnerManagementMenu();
+
+void guestMenu();
+
+void addOwner();  // Forward declaration added for addOwner()
+
+void scheduleAppointment();
+void modifyAppointment();
+void cancelAppointment();
+void viewAppointmentRecordsFullAcess();
+
+//-------------------------------------------------
+// Helper Function Definitions
+//-------------------------------------------------
+
+// Clears the input stream error state and ignores the rest of the input line.
+void clearInput() {
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
+// Checks if a given phone number string consists solely of digits.
+// Returns true if valid (or empty if optional), false otherwise.
+bool isValidPhoneNumber(const string &phone) {
+    if (phone.empty()) return true; // Allow empty phone number if optional.
+    return all_of(phone.begin(), phone.end(), ::isdigit);
+}
+
+// Ensures that a file exists (creates it if it doesn't).
+void ensureFileExists(const string& filename) {
+    ofstream ofs(filename, ios::app);
+    ofs.close();
+}
+
+//-----------------------------
 // Account Management Functions
-//-------------------------------------------------
-
+//-----------------------------
 void createNewAccount() {
-    std::string fullName, email, phone, username, password, confirmPassword;
+    string fullName, email, phone, username, password, confirmPassword;
     int accountTypeChoice;
-    std::cout << "\n--- Create New Account ---" << std::endl;
-    std::cout << "Enter Full Name: ";
-    std::getline(std::cin, fullName);
-    std::cout << "Enter Email Address: ";
-    std::getline(std::cin, email);
-    std::cout << "Enter Phone Number (optional): ";
-    std::getline(std::cin, phone);
-    std::cout << "Choose Username: ";
-    std::getline(std::cin, username);
-    std::cout << "Choose Password: ";
-    std::getline(std::cin, password);
-    std::cout << "Confirm Password: ";
-    std::getline(std::cin, confirmPassword);
+    cout << "\n--- Create New Account ---" << endl;
+
+    cout << "Enter Full Name: ";
+    getline(cin, fullName);
+
+    cout << "Enter Email Address: ";
+    getline(cin, email);
+
+    // Validate phone number input: only digits allowed.
+    bool validPhone = false;
+    while (!validPhone) {
+        cout << "Enter Phone Number: ";
+        getline(cin, phone);
+        if (isValidPhoneNumber(phone)) {
+            validPhone = true;
+        } else {
+            cout << "Invalid input. Phone number must contain only digits." << endl;
+        }
+    }
+
+    cout << "Choose Username: ";
+    getline(cin, username);
+
+    cout << "Choose Password: ";
+    getline(cin, password);
+
+    cout << "Confirm Password: ";
+    getline(cin, confirmPassword);
+
     if (password != confirmPassword) {
-        std::cout << "Passwords do not match. Account creation failed." << std::endl;
+        cout << "Passwords do not match. Account creation failed." << endl;
         return;
     }
-    std::cout << "\nChoose Account Type:\n1. Guest\n2. Staff (Admin/Staff/Veterinary)" << std::endl;
-    std::cout << "Enter your choice: ";
-    std::cin >> accountTypeChoice;
-    std::cin.ignore();
+
+    cout << "\nChoose Account Type:" << endl;
+    cout << "1. Guest" << endl;
+    cout << "2. Staff (Admin/Staff/Veterinary)" << endl;
+    cout << "Enter your choice: ";
+    cin >> accountTypeChoice;
+    clearInput();
+
     if (accountTypeChoice == 1) {
-        std::string extraInfo = fullName + "," + email + "," + phone;
+        string extraInfo = fullName + "," + email + "," + phone;
         if (!checkForDuplicates(username, "Data/owner.txt")) {
-            std::ofstream outfile("Data/owner.txt", std::ios::app);
+            ofstream outfile("Data/owner.txt", ios::app);
             outfile << username << "," << password << "," << extraInfo << "\n";
             outfile.close();
-            std::cout << "Guest account created successfully!" << std::endl;
+            cout << "Guest account created successfully!" << endl;
         } else {
-            std::cout << "Account already exists. Please login." << std::endl;
+            cout << "Account already exists. Please login." << endl;
         }
     }
     else if (accountTypeChoice == 2) {
         int roleChoice;
-        std::string role;
-        std::cout << "Select Role:\n1. Admin\n2. Staff\n3. Veterinary" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> roleChoice;
-        std::cin.ignore();
+        string role;
+        cout << "Select Role:" << endl;
+        cout << "1. Admin" << endl;
+        cout << "2. Staff" << endl;
+        cout << "3. Veterinary" << endl;
+        cout << "Enter your choice: ";
+        cin >> roleChoice;
+        clearInput();
         switch (roleChoice) {
             case 1: role = "Admin"; break;
             case 2: role = "Staff"; break;
             case 3: role = "Veterinary"; break;
             default:
-                std::cout << "Invalid role choice. Account creation failed." << std::endl;
+                cout << "Invalid role choice. Account creation failed." << endl;
                 return;
         }
         if (!checkForDuplicates(username, "Data/staffacc.txt")) {
-            std::ofstream outfile("Data/staffacc.txt", std::ios::app);
+            ofstream outfile("Data/staffacc.txt", ios::app);
             outfile << username << "," << password << "," << role << "\n";
             outfile.close();
-            std::cout << role << " account created successfully!" << std::endl;
+            cout << role << " account created successfully!" << endl;
         } else {
-            std::cout << "Account already exists. Please login." << std::endl;
+            cout << "Account already exists. Please login." << endl;
         }
     }
     else {
-        std::cout << "Invalid account type choice. Account creation failed." << std::endl;
+        cout << "Invalid account type choice. Account creation failed." << endl;
     }
 }
 
 void alreadyHaveAccount() {
-    std::cout << "\nRedirecting to Login Menu..." << std::endl;
-    loginMenu();  // Call the actual loginMenu function
+    cout << "\nRedirecting to Login Menu..." << endl;
+    loginMenu();
 }
 
-
-
-//-------------------------------------------------
-// Utility Functions
-//-------------------------------------------------
-void clearInput() {
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-}
-
-void ensureFileExists(const std::string& filename) {
-    std::ofstream ofs(filename, std::ios::app);
-    ofs.close();
-}
-
-//-------------------------------------------------
-// Login and Sign Up Menus (Redirection Only)
-//-------------------------------------------------
-
-bool checkCredentials(const std::string& username, const std::string& password, const std::string& filename, const std::string& expectedRole) {
-    std::ifstream infile(filename);
+//-----------------------------
+// Login Functions and Menus
+//-----------------------------
+bool checkCredentials(const string& username, const string& password, const string& filename, const string& expectedRole) {
+    ifstream infile(filename);
     if (!infile.is_open()) {
-        std::cout << "Error: Could not open file " << filename << std::endl;
+        cout << "Error: Could not open file " << filename << endl;
         return false;
     }
-    std::string line;
-    while (std::getline(infile, line)) {
+    string line;
+    while (getline(infile, line)) {
         if (line.empty())
             continue;
-        std::stringstream ss(line);
-
-        // std::cout << line << std::endl; // test, delete later
-
-        std::string fileUsername, filePassword, fileRole;
-        std::getline(ss, fileUsername, ',');
-        if(fileUsername != username){
+        stringstream ss(line);
+        string fileUsername, filePassword, fileRole;
+        getline(ss, fileUsername, ',');
+        if (fileUsername != username)
             continue;
-        }
-        std::getline(ss, fileRole, ',');
-        std::getline(ss, filePassword, ',');
-
-        // std::cout << fileUsername << " " << filePassword << fileRole << std::endl; // test, delete later
-        // std::cout << username << " " << password << expectedRole << std::endl; // test, delete later
-
+        getline(ss, fileRole, ',');
+        getline(ss, filePassword, ',');
         if (fileUsername == username && filePassword == password) {
-            if (expectedRole == "Guest" || fileRole == expectedRole)
+            if (expectedRole == "guest" || fileRole == expectedRole)
                 return true;
         }
     }
     return false;
 }
 
-bool loginUser(const std::string& expectedRole) {
-    std::string filename = (expectedRole == "guest") ? "Data/owner.txt" : "Data/staffacc.txt";
+bool loginUser(const string& expectedRole) {
+    string filename = (expectedRole == "guest") ? "Data/owner.txt" : "Data/staffacc.txt";
     ensureFileExists(filename);
-    std::string username, password;
-    std::cout << "Enter username: ";
-    std::getline(std::cin, username);
-    std::cout << "Enter password: ";
-    std::getline(std::cin, password);
+    string username, password;
+    cout << "Enter username: ";
+    getline(cin, username);
+    cout << "Enter password: ";
+    getline(cin, password);
 
     if (checkCredentials(username, password, filename, expectedRole)) {
-        std::cout << "Login successful as " << expectedRole << "!" << std::endl;
+        cout << "Login successful as " << expectedRole << "!" << endl;
         return true;
     }
     else {
-        std::cout << "Login failed. Invalid credentials." << std::endl;
+        cout << "Login failed. Invalid credentials." << endl;
         return false;
     }
 }
 
-//-------------------------------------------------
-// Main Menu
-//-------------------------------------------------
-void mainMenu() {
-    int choice;
-    do {
-        std::cout << "\n=== Main Menu ===" << std::endl;
-        std::cout << "1. Login" << std::endl;
-        std::cout << "2. Sign Up" << std::endl;
-        std::cout << "3. Exit" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
-            clearInput();
-            continue;
-        }
-        clearInput();
-        switch (choice) {
-            case 1: loginMenu(); break;
-            case 2: signUpMenu();
-            case 3: std::cout << "Exiting program. Goodbye!" << std::endl; break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
-        }
-    } while (choice != 3);
-}
-
-//-------------------------------------------------
-// Login Menu
-//-------------------------------------------------
 void loginMenu() {
     int choice;
     do {
-        std::cout << "\n=== Login Menu ===" << std::endl;
-        std::cout << "1. Admin" << std::endl;
-        std::cout << "2. Staff" << std::endl;
-        std::cout << "3. Veterinary" << std::endl;
-        std::cout << "4. Guest" << std::endl;
-        std::cout << "0. Back" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
+        cout << "\n=== Login Menu ===" << endl;
+        cout << "1. Admin" << endl;
+        cout << "2. Staff" << endl;
+        cout << "3. Veterinary" << endl;
+        cout << "4. Guest" << endl;
+        cout << "0. Back" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        if (cin.fail()) {
+            cout << "Invalid input." << endl;
             clearInput();
             continue;
         }
@@ -208,26 +236,23 @@ void loginMenu() {
             case 2: if (loginUser("staff")) staffMenu(); break;
             case 3: if (loginUser("veterinary")) veterinaryMenu(); break;
             case 4: if (loginUser("guest")) guestMenu(); break;
-            case 0: std::cout << "Returning to Main Menu..." << std::endl; break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
+            case 0: cout << "Returning to Main Menu..." << endl; break;
+            default: cout << "Invalid choice, try again." << endl;
         }
     } while (choice != 0);
 }
 
-//-------------------------------------------------
-// Sign Up Menu
-//-------------------------------------------------
 void signUpMenu() {
     int choice;
     do {
-        std::cout << "\n=== Sign Up Menu ===" << std::endl;
-        std::cout << "1. Create New Account" << std::endl;
-        std::cout << "2. Already Have an Account?" << std::endl;
-        std::cout << "0. Back" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
+        cout << "\n=== Sign Up Menu ===" << endl;
+        cout << "1. Create New Account" << endl;
+        cout << "2. Already Have an Account?" << endl;
+        cout << "0. Back" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        if (cin.fail()) {
+            cout << "Invalid input." << endl;
             clearInput();
             continue;
         }
@@ -235,29 +260,52 @@ void signUpMenu() {
         switch (choice) {
             case 1: createNewAccount(); break;
             case 2: alreadyHaveAccount(); break;
-            case 0: std::cout << "Returning to Main Menu..." << std::endl;
-            default: std::cout << "Invalid choice, try again." << std::endl;
+            case 0: cout << "Returning to Main Menu..." << endl; break;
+            default: cout << "Invalid choice, try again." << endl;
         }
     } while (choice != 0);
 }
 
-//-------------------------------------------------
-// The following menus simply redirect to functions in features (or profiles)
-//-------------------------------------------------
+void mainMenu() {
+    int choice;
+    do {
+        cout << "\n=== Main Menu ===" << endl;
+        cout << "1. Login" << endl;
+        cout << "2. Sign Up" << endl;
+        cout << "3. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        if (cin.fail()) {
+            cout << "Invalid input." << endl;
+            clearInput();
+            continue;
+        }
+        clearInput();
+        switch (choice) {
+            case 1: loginMenu(); break;
+            case 2: signUpMenu(); break;
+            case 3: cout << "Exiting program. Goodbye!" << endl; break;
+            default: cout << "Invalid choice, try again." << endl;
+        }
+    } while (choice != 3);
+}
 
+//-----------------------------
+// Admin Menus
+//-----------------------------
 void adminMenu() {
     int choice;
     do {
-        std::cout << "\n=== Admin Menu ===" << std::endl;
-        std::cout << "1. Appointment Management" << std::endl;
-        std::cout << "2. Owner Management" << std::endl;
-        std::cout << "3. Pet Management" << std::endl;
-        std::cout << "4. System Management" << std::endl;
-        std::cout << "0. Logout" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
+        cout << "\n=== Admin Menu ===" << endl;
+        cout << "1. Appointment Management" << endl;
+        cout << "2. Owner Management" << endl;
+        cout << "3. Pet Management" << endl;
+        cout << "4. System Management" << endl;
+        cout << "0. Logout" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        if (cin.fail()) {
+            cout << "Invalid input." << endl;
             clearInput();
             continue;
         }
@@ -267,8 +315,8 @@ void adminMenu() {
             case 2: adminOwnerManagementMenu(); break;
             case 3: adminPetManagementMenu(); break;
             case 4: adminSystemManagementMenu(); break;
-            case 0: std::cout << "Logging out of Admin account..." << std::endl; break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
+            case 0: cout << "Logging out of Admin account..." << endl; break;
+            default: cout << "Invalid choice, try again." << endl;
         }
     } while (choice != 0);
 }
@@ -276,16 +324,16 @@ void adminMenu() {
 void adminAppointmentManagementMenu() {
     int choice;
     do {
-        std::cout << "\n--- Admin Appointment Management ---" << std::endl;
-        std::cout << "1. Schedule Appointment" << std::endl;
-        std::cout << "2. Modify Appointment" << std::endl;
-        std::cout << "3. Cancel Appointment" << std::endl;
-        std::cout << "4. View Appointment Records" << std::endl;
-        std::cout << "0. Back" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
+        cout << "\n--- Admin Appointment Management ---" << endl;
+        cout << "1. Schedule Appointment" << endl;
+        cout << "2. Modify Appointment" << endl;
+        cout << "3. Cancel Appointment" << endl;
+        cout << "4. View Appointment Records" << endl;
+        cout << "0. Back" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        if (cin.fail()) {
+            cout << "Invalid input." << endl;
             clearInput();
             continue;
         }
@@ -295,8 +343,8 @@ void adminAppointmentManagementMenu() {
             case 2: modifyAppointment(); break;
             case 3: cancelAppointment(); break;
             case 4: viewAppointmentRecordsFullAcess(); break;
-            case 0: std::cout << "Returning to Admin Menu..." << std::endl; break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
+            case 0: cout << "Returning to Admin Menu..." << endl; break;
+            default: cout << "Invalid choice, try again." << endl;
         }
     } while (choice != 0);
 }
@@ -304,27 +352,48 @@ void adminAppointmentManagementMenu() {
 void adminOwnerManagementMenu() {
     int choice;
     do {
-        std::cout << "\n--- Admin Owner Management ---" << std::endl;
-        std::cout << "1. View Owner Records" << std::endl;
-        std::cout << "2. Add Owner" << std::endl;
-        std::cout << "3. Update Owner Details" << std::endl;
-        std::cout << "4. Remove Owner" << std::endl;
-        std::cout << "0. Back" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
+        cout << "\n--- Admin Owner Management ---" << endl;
+        cout << "1. View Owner Records" << endl;
+        cout << "2. Add Owner" << endl;
+        cout << "3. Update Owner Details" << endl;
+        cout << "4. Remove Owner" << endl;
+        cout << "0. Back" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        if (cin.fail()) {
+            cout << "Invalid input." << endl;
             clearInput();
             continue;
         }
         clearInput();
         switch (choice) {
-            case 1: std::cout << "Redirecting to View Owner Records..." << std::endl; break;
-            case 2: std::cout << "Redirecting to Add Owner..." << std::endl; break;
-            case 3: std::cout << "Redirecting to Update Owner Details..." << std::endl; break;
-            case 4: std::cout << "Redirecting to Remove Owner..." << std::endl; break;
-            case 0: std::cout << "Returning to Admin Menu..." << std::endl; break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
+            case 1: {
+                string username;
+                cout << "Enter the username of the owner to view: ";
+                cin >> username;
+                clearInput();
+                View view;
+                view.viewIndividual(username, "Data/owner.txt");
+                break;
+            }
+            case 2:
+                addOwner();  // Now addOwner is declared
+                break;
+            case 3:
+                cout << "Redirecting to Update Owner Details..." << endl;
+                break;
+            case 4: {
+                string username;
+                cout << "Enter the username of the owner to delete: ";
+                cin >> username;
+                clearInput();
+                Delete del;
+                del.deleteEntry(username, "Data/owner.txt", "Owner");
+                cout << "Owner profile deleted successfully." << endl;
+                break;
+            }
+            case 0: cout << "Returning to Admin Menu..." << endl; break;
+            default: cout << "Invalid option. Please try again." << endl;
         }
     } while (choice != 0);
 }
@@ -332,27 +401,27 @@ void adminOwnerManagementMenu() {
 void adminPetManagementMenu() {
     int choice;
     do {
-        std::cout << "\n--- Admin Pet Management ---" << std::endl;
-        std::cout << "1. View Pet Records" << std::endl;
-        std::cout << "2. Add Pet" << std::endl;
-        std::cout << "3. Update Pet Details" << std::endl;
-        std::cout << "4. Remove Pet" << std::endl;
-        std::cout << "0. Back" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
+        cout << "\n--- Admin Pet Management ---" << endl;
+        cout << "1. View Pet Records" << endl;
+        cout << "2. Add Pet" << endl;
+        cout << "3. Update Pet Details" << endl;
+        cout << "4. Remove Pet" << endl;
+        cout << "0. Back" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        if (cin.fail()) {
+            cout << "Invalid input." << endl;
             clearInput();
             continue;
         }
         clearInput();
         switch (choice) {
-            case 1: std::cout << "Redirecting to View Pet Records..." << std::endl; break;
-            case 2: std::cout << "Redirecting to Add Pet..." << std::endl; break;
-            case 3: std::cout << "Redirecting to Update Pet Details..." << std::endl; break;
-            case 4: std::cout << "Redirecting to Remove Pet..." << std::endl; break;
-            case 0: std::cout << "Returning to Admin Menu..." << std::endl; break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
+            case 1: cout << "Redirecting to View Pet Records..." << endl; break;
+            case 2: cout << "Redirecting to Add Pet..." << endl; break;
+            case 3: cout << "Redirecting to Update Pet Details..." << endl; break;
+            case 4: cout << "Redirecting to Remove Pet..." << endl; break;
+            case 0: cout << "Returning to Admin Menu..." << endl; break;
+            default: cout << "Invalid choice, try again." << endl;
         }
     } while (choice != 0);
 }
@@ -360,129 +429,48 @@ void adminPetManagementMenu() {
 void adminSystemManagementMenu() {
     int choice;
     do {
-        std::cout << "\n--- Admin System Management ---" << std::endl;
-        std::cout << "1. Save Data" << std::endl;
-        std::cout << "2. Load Data" << std::endl;
-        std::cout << "0. Back" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
+        cout << "\n--- Admin System Management ---" << endl;
+        cout << "1. Save Data" << endl;
+        cout << "2. Load Data" << endl;
+        cout << "0. Back" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        if (cin.fail()) {
+            cout << "Invalid input." << endl;
             clearInput();
             continue;
         }
         clearInput();
         switch (choice) {
-            case 1: std::cout << "Redirecting to Save Data..." << std::endl; break;
-            case 2: std::cout << "Redirecting to Load Data..." << std::endl; break;
-            case 0: std::cout << "Returning to Admin Menu..." << std::endl; break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
+            case 1: cout << "Redirecting to Save Data..." << endl; break;
+            case 2: cout << "Redirecting to Load Data..." << endl; break;
+            case 0: cout << "Returning to Admin Menu..." << endl; break;
+            default: cout << "Invalid choice, try again." << endl;
         }
     } while (choice != 0);
 }
 
-void viewOwnerRecords() {
-    std::string username;
-    std::cout << "Enter the username of the owner to view: ";
-    std::cin >> username;
-
-    View view;
-    view.viewIndividual(username, "data/owner.txt");  // adjust path if different
-}
-
-void addOwner() {
-    std::string uname, role = "owner", pwd, fname, mail, phone;
-
-    std::cout << "Enter new owner's username: ";
-    std::cin >> uname;
-    std::cout << "Enter password: ";
-    std::cin >> pwd;
-    std::cout << "Enter full name: ";
-    std::cin.ignore(); // flush newline
-    std::getline(std::cin, fname);
-    std::cout << "Enter email: ";
-    std::cin >> mail;
-    std::cout << "Enter phone number: ";
-    std::cin >> phone;
-
-    Save save;
-    save.saveUser(uname, role, pwd, fname, mail, phone);
-    std::cout << "Owner profile added successfully.\n";
-}
-
-void updateOwner() {
-    std::string username;
-    std::cout << "Enter the username of the owner to update: ";
-    std::cin >> username;
-
-    Update update;
-    update.updateUser(username, "data/users.txt");  // adjust path if needed
-}
-
-void removeOwner() {
-    std::string username;
-    std::cout << "Enter the username of the owner to delete: ";
-    std::cin >> username;
-
-    Delete del;
-    del.deleteEntry(username, "Data/owner.txt", "Owner");
-    std::cout << "Owner profile deleted successfully.\n";
-}
-
-void adminOwnerManagement() {
-    int choice;
-
-    do {
-        std::cout << "\n--- Admin: Owner Management ---\n";
-        std::cout << "1. View Owner Records\n";
-        std::cout << "2. Add New Owner\n";
-        std::cout << "3. Update Existing Owner\n";
-        std::cout << "4. Remove Owner\n";
-        std::cout << "0. Back to Admin Menu\n";
-        std::cout << "Select an option: ";
-        std::cin >> choice;
-
-        switch (choice) {
-            case 1:
-                viewOwnerRecords();
-                break;
-            case 2:
-                addOwner();
-                break;
-            case 3:
-                updateOwner();
-                break;
-            case 4:
-                removeOwner();
-                break;
-            case 0:
-                std::cout << "Returning to admin menu...\n";
-                break;
-            default:
-                std::cout << "Invalid option. Please try again.\n";
-        }
-
-    } while (choice != 0);
-}
-
+//-----------------------------
+// Staff Menus
+//-----------------------------
 void staffMenu() {
     int choice;
     do {
-        std::cout << "\n=== Staff Menu ===" << std::endl;
-        std::cout << "1. Appointment Management" << std::endl;
-        std::cout << "0. Logout" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
+        cout << "\n=== Staff Menu ===" << endl;
+        cout << "1. Appointment Management" << endl;
+        cout << "0. Logout" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        if(cin.fail()){
+            cout << "Invalid input." << endl;
             clearInput();
             continue;
         }
         clearInput();
-        switch (choice) {
+        switch(choice) {
             case 1: staffAppointmentManagementMenu(); break;
-            case 0: std::cout << "Logging out of Staff account..." << std::endl; break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
+            case 0: cout << "Logging out of Staff account..." << endl; break;
+            default: cout << "Invalid choice, try again." << endl;
         }
     } while (choice != 0);
 }
@@ -490,257 +478,269 @@ void staffMenu() {
 void staffAppointmentManagementMenu() {
     int choice;
     do {
-        std::cout << "\n--- Staff Appointment Management ---" << std::endl;
-        std::cout << "1. Schedule Appointment" << std::endl;
-        std::cout << "2. Modify Appointment" << std::endl;
-        std::cout << "3. Cancel Appointment" << std::endl;
-        std::cout << "4. View Appointment Records" << std::endl;
-        std::cout << "0. Back" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
+        cout << "\n--- Staff Appointment Management ---" << endl;
+        cout << "1. Schedule Appointment" << endl;
+        cout << "2. Modify Appointment" << endl;
+        cout << "3. Cancel Appointment" << endl;
+        cout << "4. View Appointment Records" << endl;
+        cout << "0. Back" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        if(cin.fail()){
+            cout << "Invalid input." << endl;
             clearInput();
             continue;
         }
         clearInput();
-        switch (choice) {
+        switch(choice) {
             case 1: scheduleAppointment(); break;
-            case 2: std::cout << "Redirecting to Modify Appointment..." << std::endl; break;
-            case 3: std::cout << "Redirecting to Cancel Appointment..." << std::endl; break;
-            case 4: std::cout << "Redirecting to View Appointment Records..." << std::endl; break;
-            case 0: std::cout << "Returning to Staff Menu..." << std::endl; break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
+            case 2: modifyAppointment(); break;
+            case 3: cancelAppointment(); break;
+            case 4: viewAppointmentRecordsFullAcess(); break;
+            case 0: cout << "Returning to Staff Menu..." << endl; break;
+            default: cout << "Invalid choice, try again." << endl;
         }
-    } while (choice != 0);
+    } while(choice != 0);
 }
 
+//-----------------------------
+// Veterinary Menus
+//-----------------------------
 void veterinaryMenu() {
     int choice;
     do {
-        std::cout << "\n=== Veterinary Menu ===" << std::endl;
-        std::cout << "1. Appointment Management" << std::endl;
-        std::cout << "2. Owner Management" << std::endl;
-        std::cout << "0. Logout" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
+        cout << "\n=== Veterinary Menu ===" << endl;
+        cout << "1. Appointment Management" << endl;
+        cout << "2. Owner Management" << endl;
+        cout << "0. Logout" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        if(cin.fail()){
+            cout << "Invalid input." << endl;
             clearInput();
             continue;
         }
         clearInput();
-        switch (choice) {
+        switch(choice) {
             case 1: veterinaryAppointmentManagementMenu(); break;
             case 2: veterinaryOwnerManagementMenu(); break;
-            case 0: std::cout << "Logging out of Veterinary account..." << std::endl; break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
+            case 0: cout << "Logging out of Veterinary account..." << endl; break;
+            default: cout << "Invalid choice, try again." << endl;
         }
-    } while (choice != 0);
+    } while(choice != 0);
 }
 
 void veterinaryAppointmentManagementMenu() {
     int choice;
     do {
-        std::cout << "\n--- Veterinary Appointment Management ---" << std::endl;
-        std::cout << "1. Schedule Appointment" << std::endl;
-        std::cout << "2. Modify Appointment" << std::endl;
-        std::cout << "3. Cancel Appointment" << std::endl;
-        std::cout << "4. View Appointment Records" << std::endl;
-        std::cout << "0. Back" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
+        cout << "\n--- Veterinary Appointment Management ---" << endl;
+        cout << "1. Schedule Appointment" << endl;
+        cout << "2. Modify Appointment" << endl;
+        cout << "3. Cancel Appointment" << endl;
+        cout << "4. View Appointment Records" << endl;
+        cout << "0. Back" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        if(cin.fail()){
+            cout << "Invalid input." << endl;
             clearInput();
             continue;
         }
         clearInput();
-        switch (choice) {
+        switch(choice) {
             case 1: scheduleAppointment(); break;
-            case 2: std::cout << "Redirecting to Modify Appointment..." << std::endl; break;
-            case 3: std::cout << "Redirecting to Cancel Appointment..." << std::endl; break;
-            case 4: std::cout << "Redirecting to View Appointment Records..." << std::endl; break;
-            case 0: std::cout << "Returning to Veterinary Menu..." << std::endl; break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
+            case 2: modifyAppointment(); break;
+            case 3: cancelAppointment(); break;
+            case 4: viewAppointmentRecordsFullAcess(); break;
+            case 0: cout << "Returning to Veterinary Menu..." << endl; break;
+            default: cout << "Invalid choice, try again." << endl;
         }
-    } while (choice != 0);
+    } while(choice != 0);
 }
-
-
 
 void veterinaryOwnerManagementMenu() {
     int choice;
     do {
-        std::cout << "\n--- Veterinary Owner Management ---" << std::endl;
-        std::cout << "1. View Owner Records" << std::endl;
-        std::cout << "2. Update Owner Details" << std::endl;
-        std::cout << "0. Back" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
+        cout << "\n--- Veterinary Owner Management ---" << endl;
+        cout << "1. View Owner Records" << endl;
+        cout << "2. Update Owner Details" << endl;
+        cout << "0. Back" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        if(cin.fail()){
+            cout << "Invalid input." << endl;
             clearInput();
             continue;
         }
         clearInput();
-        switch (choice) {
-            case 1: std::cout << "Redirecting to View Owner Records..." << std::endl; break;
-            case 2: std::cout << "Redirecting to Update Owner Details..." << std::endl; break;
-            case 0: std::cout << "Returning to Veterinary Menu..." << std::endl; break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
+        switch(choice) {
+            case 1: cout << "Redirecting to View Owner Records..." << endl; break;
+            case 2: cout << "Redirecting to Update Owner Details..." << endl; break;
+            case 0: cout << "Returning to Veterinary Menu..." << endl; break;
+            default: cout << "Invalid choice, try again." << endl;
         }
-    } while (choice != 0);
+    } while(choice != 0);
 }
 
+//-----------------------------
+// Guest Menu
+//-----------------------------
 void guestMenu() {
     int choice;
     do {
-        std::cout << "\n=== Guest Menu ===" << std::endl;
-        std::cout << "1. View Pet Records" << std::endl;
-        std::cout << "2. View Owner Records" << std::endl;
-        std::cout << "3. View Appointment Records" << std::endl;
-        std::cout << "0. Logout" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cout << "Invalid input." << std::endl;
+        cout << "\n=== Guest Menu ===" << endl;
+        cout << "1. View Pet Records" << endl;
+        cout << "2. View Owner Records" << endl;
+        cout << "3. View Appointment Records" << endl;
+        cout << "0. Logout" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        if(cin.fail()){
+            cout << "Invalid input." << endl;
             clearInput();
             continue;
         }
         clearInput();
-        switch (choice) {
-            case 1: std::cout << "Redirecting to View Pet Records..." << std::endl; break;
-            case 2: std::cout << "Redirecting to View Owner Records..." << std::endl; break;
-            case 3: std::cout << "Redirecting to View Appointment Records..." << std::endl; break;
-            case 0: std::cout << "Logging out of Guest account..." << std::endl; break;
-            default: std::cout << "Invalid choice, try again." << std::endl;
+        switch(choice) {
+            case 1: cout << "Redirecting to View Pet Records..." << endl; break;
+            case 2: cout << "Redirecting to View Owner Records..." << endl; break;
+            case 3: cout << "Redirecting to View Appointment Records..." << endl; break;
+            case 0: cout << "Logging out of Guest account..." << endl; break;
+            default: cout << "Invalid choice, try again." << endl;
         }
-    } while (choice != 0);
+    } while(choice != 0);
 }
 
-//-------------------------------------------------
-// Utility functions, these are connected to features.cpp
-//-------------------------------------------------
-
-
+//-----------------------------
+// Appointment Operations (linked to features)
+//-----------------------------
 void scheduleAppointment() {
-
     int appointmentID;
-    std::string petName;
-    std::string ownerUsername;
-    std::string appointmentDate;
-    std::string appointmentDescription;
-
-    std::cout << "\n--- Schedule Appointment ---\n";
-
-    // Get Appointment ID
-    std::cout << "Enter Appointment ID (integer): ";
-    while (!(std::cin >> appointmentID)) {
-        std::cout << "Invalid input. Please enter a valid integer for Appointment ID: ";
+    string petName, ownerUsername, appointmentDate, appointmentDescription;
+    cout << "\n--- Schedule Appointment ---" << endl;
+    cout << "Enter Appointment ID (integer): ";
+    while (!(cin >> appointmentID)) {
+        cout << "Invalid input. Please enter a valid integer for Appointment ID: ";
         clearInput();
     }
-
-    std::string stringID = std::to_string(appointmentID);
-    if(checkForDuplicates(stringID, "Data/appointments")) {
+    clearInput();
+    string stringID = to_string(appointmentID);
+    if (checkForDuplicates(stringID, "Data/appointments.txt")) {
         return;
     }
-    clearInput();
+    cout << "Enter Pet Name: ";
+    getline(cin, petName);
+    cout << "Enter Owner Username: ";
+    getline(cin, ownerUsername);
+    cout << "Enter Appointment Date (e.g., 2025-04-12): ";
+    getline(cin, appointmentDate);
+    cout << "Enter Appointment Description: ";
+    getline(cin, appointmentDescription);
 
-    // Get Pet Name
-    std::cout << "Enter Pet Name: ";
-    std::getline(std::cin, petName);
-
-    // Get Owner Username
-    std::cout << "Enter Owner Username: ";
-    std::getline(std::cin, ownerUsername);
-
-    // Get Appointment Date
-    std::cout << "Enter Appointment Date (e.g., 2025-04-12): ";
-    std::getline(std::cin, appointmentDate);
-
-    // Get Appointment Description
-    std::cout << "Enter Appointment Description: ";
-    std::getline(std::cin, appointmentDescription);
-
+    // Creating an Appointment object (constructor auto-saves data)
     Appointment appointment(appointmentID, petName, ownerUsername, appointmentDate, appointmentDescription);
-
 }
 
 void modifyAppointment() {
     int appointmentID;
-    std::string filePath = "Data/appointments.txt";
-
-    // Ask the user for the Appointment ID
-    std::cout << "\n--- Modify Appointment ---\n";
-    std::cout << "Please enter the Appointment ID of the appointment you want to modify: ";
-
-    // Input validation for the Appointment ID
-    while (!(std::cin >> appointmentID)) {
-        std::cout << "Invalid input. Please enter a valid integer for Appointment ID: ";
-        std::cin.clear();  // Clear the error flag
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // Ignore invalid input
+    string filePath = "Data/appointments.txt";
+    cout << "\n--- Modify Appointment ---" << endl;
+    cout << "Please enter the Appointment ID of the appointment you want to modify: ";
+    while (!(cin >> appointmentID)) {
+        cout << "Invalid input. Please enter a valid integer for Appointment ID: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
-
-    // Proceed to update the appointment using the given ID
+    clearInput();
+    Update update;
     update.updateAppointment(appointmentID, filePath);
-
-    std::cout << "Appointment with ID " << appointmentID << " has been successfully modified!" << std::endl;
+    cout << "Appointment with ID " << appointmentID << " has been successfully modified!" << endl;
 }
 
-void cancelAppointment(){
-    std::cout << "\n--- Delete Appointment ---\n";
-
-    std::string identifier;
-    std::string fileName = "Data/appointments.txt";
-    std::string entryType = "Appointment";
-
-    std::cout << "Please enter appointment ID you would like to delete:";
-    std::cin >> identifier;
-
+void cancelAppointment() {
+    cout << "\n--- Delete Appointment ---" << endl;
+    string identifier;
+    string fileName = "Data/appointments.txt";
+    string entryType = "Appointment";
+    cout << "Please enter the appointment ID you would like to delete: ";
+    cin >> identifier;
+    clearInput();
     if (identifier.empty()) {
-        std::cout << "Invalid input. Please enter a valid appointment ID." << std::endl;
+        cout << "Invalid input. Please enter a valid appointment ID." << endl;
         return;
     }
-
+    Delete deleteInstance;
     deleteInstance.deleteEntry(identifier, fileName, entryType);
-};
+}
 
 void viewAppointmentRecordsFullAcess() {
     int choice;
-    std::string pathToFile = "Data/appointments.txt";
-    std::cout << "\n--- View Appointment Records ---\n";
-    std::cout << "1. View All Appointment Records\n";
-    std::cout << "2. View a Specific Appointment Record\n";
-    std::cout << "0. Back\n";
-    std::cout << "Enter your choice: ";
-    std::cin >> choice;
-
-    if (std::cin.fail()) {
-        std::cout << "Invalid input. Please enter a valid choice." << std::endl;
-        clearInput();  // Clear invalid input
+    string pathToFile = "Data/appointments.txt";
+    cout << "\n--- View Appointment Records ---" << endl;
+    cout << "1. View All Appointment Records" << endl;
+    cout << "2. View a Specific Appointment Record" << endl;
+    cout << "0. Back" << endl;
+    cout << "Enter your choice: ";
+    cin >> choice;
+    if (cin.fail()) {
+        cout << "Invalid input. Please enter a valid choice." << endl;
+        clearInput();
         return;
     }
-
-    // Handle the user choice
+    clearInput();
     switch (choice) {
         case 1: {
+            View view;
             view.viewAllAppointments(pathToFile);
             break;
         }
         case 2: {
-            // Display a specific record
             int identifier;
-            std::cout << "Enter Appointment ID: ";
-            std::cin >> identifier;
-            
+            cout << "Enter Appointment ID: ";
+            cin >> identifier;
+            clearInput();
+            View view;
             view.viewIndividualAppointment(identifier, pathToFile);
             break;
         }
         case 0:
-            std::cout << "Returning to previous menu...\n";
+            cout << "Returning to previous menu..." << endl;
             break;
         default:
-            std::cout << "Invalid choice. Please try again.\n";
+            cout << "Invalid choice. Please try again." << endl;
     }
+}
+
+//-----------------------------
+// Additional Functions
+//-----------------------------
+void addOwner() {
+    string uname, role = "owner", pwd, fname, mail, phone;
+
+    cout << "Enter new owner's username: ";
+    cin >> uname;
+    cout << "Enter password: ";
+    cin >> pwd;
+    cout << "Enter full name: ";
+    cin.ignore(); // flush newline
+    getline(cin, fname);
+    cout << "Enter email: ";
+    cin >> mail;
+
+    // Validate phone number input: only digits allowed.
+    bool validPhone = false;
+    while (!validPhone) {
+        cout << "Enter phone number (digits only): ";
+        cin >> phone;
+        if (isValidPhoneNumber(phone)) {
+            validPhone = true;
+        } else {
+            cout << "Invalid input. Only digits allowed. Please re-enter." << endl;
+        }
+    }
+    clearInput();
+
+    Save save;
+    save.saveUser(uname, role, pwd, fname, mail, phone);
+    cout << "Owner profile added successfully." << endl;
 }
