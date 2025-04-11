@@ -245,7 +245,7 @@ void loginMenu() {
         switch (choice) {
             case 1: if (loginUser("admin")) adminMenu(); break;
             case 2: if (loginUser("staff")) staffMenu(); break;
-            case 3: if (loginUser("veterinary")) veterinaryMenu(); break;
+            case 3: if (loginUser("vet")) veterinaryMenu(); break;
             case 4: if (loginUser("guest")) guestMenu(); break;
             case 0: std::cout << "Returning to Main Menu..." << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
@@ -568,8 +568,8 @@ void veterinaryOwnerManagementMenu() {
         }
         clearInput();
         switch (choice) {
-            case 1: std::cout << "Redirecting to View Owner Records..." << std::endl; break;
-            case 2: std::cout << "Redirecting to Update Owner Details..." << std::endl; break;
+            case 1: viewOwnerRecords(); break;
+            case 2: updateOwner(); break;
             case 0: std::cout << "Returning to Veterinary Menu..." << std::endl; break;
             default: std::cout << "Invalid choice, try again." << std::endl;
         }
