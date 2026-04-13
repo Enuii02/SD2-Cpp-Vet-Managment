@@ -1,47 +1,52 @@
-# SD2_CW
+# 🐾 Veterinary Management System (C++)
 
-////Veterinary Management System////
+A simple robust terminal-based management solution developed as part of a **First-Year Software Development module**. This project demonstrates core competencies in C++, object-oriented logic, and secure data handling.
 
-//// Program intro ////
+---
 
-A vet management program that lets the user create accounts for staff of the vet, as well as create guest accounts for owners.
+## 🚀 Skills Showcased
+* **Language:** C++
+* **Paradigm:** Object-Oriented Programming (Classes, Inheritance, and Encapsulation)
+* **Data Management:** File I/O for persistent storage (`.txt` database)
+* **Security:** Role-Based Access Control (RBAC) and credential validation
+* **Software Design:** Input validation and modular code structure
 
-- Can create staff accounts: Admin, Vet, Staff
-- Can create guest accounts for owners who would like to view their own data.
+---
 
-- Different staff roles have different privileges 
+## 🔐 Access Control & Roles
 
-- Admin has access to everything and can use any part of the management system
+The system mimics professional software by implementing specific user privileges:
 
-- Vet has full access to pet management and appointment management, may only view and update owners
+| Role | Permissions |
+| :--- | :--- |
+| **Admin** | Full system access: manage staff, owners, pets, and appointments. |
+| **Vet** | Clinical focus: full pet/appointment management; view/update owners. |
+| **Staff** | Administrative focus: manage appointments; view-only for owners/pets. |
+| **Guest (Owner)** | Privacy-focused: read-only access to personal and pet data. |
 
-- Staff has full access to appointment management, may only view owners and view pets
+---
 
-- Guests may only view their own data 
+## 🛠️ Implementation Details
 
+### Data Persistence
+The system utilizes local file handling to simulate a database. This ensures that user and animal records are preserved between sessions:
+* `staffacc.txt`: Encrypted-style logic for staff credentials.
+* `owner.txt`: Record management for pet owners and guests.
 
-//// How to use ////
+### User Experience
+* **Robust Input Handling:** The menu uses integer-driven navigation with a loop-back mechanism to handle invalid inputs gracefully.
+* **Account Safety:** To maintain data integrity, the system requires a structured **Sign Up** process for new users (min. 4 characters for names/usernames).
 
-Users will be prompted with a menu navigated through single integer inputs (menu will just loop if an invalid input is taken)
+---
 
-All staff accounts are stored in staffacc.txt, these follow a structure that will be created through sign up, create accounts through sign up to avoid bugs with login.
+## 📖 How to Use
 
-All guest/owner accounts are stored in owner.txt - they are created the same way between admin and guest. 
-
-To create an account select sign in > select the role of the account > input the required details
-- No restrictions on username and full name aside from minimum 4 characters. 
-
-Login is striaghtforward, input the exact details and user will be logged in.
-
-When adding something new (can be pet, owner, or appointment) follow the input guides for each one to avoid future bugs.
-
-When updating it works similarly to the different add functions.
-
-When viewing, input the according detail for individual views (e.g. pet name) unless it is viewing the whole txt file.
-
-When deleting, input the according detail for that thing's data to be deleted.
-
-
+1. **Authentication:** Select **Sign In** and choose your role.
+2. **Staff Management:** Admins can create specialized accounts for Vets and Staff.
+3. **Data Operations:**
+   - **Add:** Follow step-by-step guides for Pets, Owners, or Appointments.
+   - **View:** Search for specific records (e.g., by Pet Name) or view full lists.
+   - **Update/Delete:** Modify or remove existing records through the management dashboard.
 
 
 
