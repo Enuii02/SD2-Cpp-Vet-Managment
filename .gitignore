@@ -1,1 +1,11 @@
+# IDE and Editor files
+.vscode/
+
+# Build directories and files
 SD2_CW/
+*.exe
+*.o
+*.out
+
+# Error and log files
+error.txt
